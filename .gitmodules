@@ -1,0 +1,3 @@
+[submodule "Backend/Information Retrieval/SuperGlobal"]
+	path = Backend/Information Retrieval/SuperGlobal
+	url = https://github.com/ShihaoShao-GH/SuperGlobal.git
