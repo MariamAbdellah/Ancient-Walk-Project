@@ -1,0 +1,512 @@
+/* .App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+} */
+
+/* body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+} */
+.h2{
+  color: antiquewhite;
+  display: inline;
+}
+.div{
+  text-align: center;
+  font-size: 50px;
+  color: white;
+  
+}
+.h3{
+  text-align: center;
+  color: burlywood;
+  font-family: Arial;
+  
+}
+
+.body-background{
+  background-image: url("/public/img/egpt.jpeg");
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;  
+  height: 100vh;               
+  width: 100%;                 /* Ensures the container takes the full width */
+  overflow: hidden;            /* Prevents overflow if needed */
+}
+
+.header {
+  text-align: right;
+  font-size: 25px;
+}
+
+.a {
+  text-decoration: none; /* Remove underline */
+  margin: 10px; /* Add spacing */
+}
+
+.a{
+  color: aliceblue;
+}
+
+.bg{
+  background-color:#C49A6C;
+}
+
+
+.form-check-input {
+  transform: scale(1); /* Adjust size */
+  width: 20px; /* Set a fixed width */
+  height: 20px; /* Set a fixed height */
+}
+
+.modal-header .btn-close {
+  font-size: 0.8rem; /* Adjust the size */
+  width: 20px;  /* Smaller width */
+  height: 20px; /* Smaller height */
+}        
+
+.font{
+  font-size: 15px;
+  color: rgb(255, 249, 240);
+}
+
+.content {
+  font-size: 15px;
+  color: black ;
+  text-transform: uppercase;
+  text-align: left;
+}
+.modal-title{
+  font-size: 20px;
+  color: black ;
+  font-style: italic;
+}
+
+.style{
+  font-size: 13px;
+  color: black ;
+}
+.font-our{
+  font-size: 20px;
+  color: #f1dcb6;
+}
+.insights-slogan {
+  font-size: 25px;
+  font-style: italic;
+  font-weight: bold;
+  color: #8b4513;
+  margin-top: 20px;
+}
+
+.supporter-card {
+  background: white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  padding: 12px;
+  display: inline-block;
+  text-align: center;
+  border-radius: 12px;
+  width: 80%; /* or fixed width like 300px */
+  max-width: 320px;
+  transition: transform 0.3s ease;
+  position: relative;
+}
+
+.supporter-card .img {
+  width: 100%;
+  border-radius: 8px;
+  object-fit: cover;
+  aspect-ratio: 1/1; /* makes images square */
+}
+
+.supporter-card .caption {
+  margin-top: 10px;
+  font-style: italic;
+  font-weight: bold;
+  color: #444;
+  font-size: 1.1rem;
+}
+
+.supporter-card:hover {
+  transform: translateY(-8px);
+}
+
+/* Optional: Add a subtle Egyptian-themed border */
+.supporter-card::before {
+  content: '';
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: 6px;
+  right: 6px;
+  border: 2px solid #c2a04f;
+  pointer-events: none;
+  border-radius: 10px;
+}
+.animation {
+  display: inline-block;
+  animation: floatUpDown 2.5s ease-in-out infinite;
+}
+
+@keyframes floatUpDown {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px); /* Move up */
+  }
+  100% {
+    transform: translateY(0); /* Move back down */
+  }
+}
+/*gggggg*/  
+
+.about{
+  max-height: 500px; 
+  object-fit: cover;
+}
+.bg2{            /*image background section 12 peaple are */
+  background-image:url('/public/img/Main.png') ;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+
+.hove:hover {
+  background-color: white !important;
+  color: black !important;
+}
+
+.nav-item a:hover {
+  color: #000000 !important;
+}
+
+.form-check-input {
+  transform: scale(1); /* Adjust size */
+  width: 20px; /* Set a fixed width */
+  height: 20px; /* Set a fixed height */
+}
+
+.modal-header .btn-close {
+  font-size: 0.8rem; /* Adjust the size */
+  width: 20px;  /* Smaller width */
+  height: 20px; /* Smaller height */
+}        
+
+.font{
+  font-size: 15px;
+  color: rgb(255, 249, 240);
+}
+
+.content {
+  font-size: 15px;
+  color: black ;
+  text-transform: uppercase;
+  text-align: left;
+}
+.modal-title{
+  font-size: 20px;
+  color: black ;
+  font-style: italic;
+}
+
+.style{
+  font-size: 13px;
+  color: black ;
+}
+.hove:hover {
+  background-color: white !important;
+  color: black !important;
+}
+
+.nav-item a:hover {
+  color: #000000 !important;
+}
+
+.form-check-input {
+transform: scale(1); /* Adjust size */
+width: 20px; /* Set a fixed width */
+height: 20px; /* Set a fixed height */
+}
+
+.modal-header .btn-close {
+  font-size: 0.8rem; /* Adjust the size */
+  width: 20px;  /* Smaller width */
+  height: 20px; /* Smaller height */
+}        
+
+.font{
+  font-size: 15px;
+ color: rgb(255, 249, 240);
+}
+
+.content {
+  font-size: 15px;
+  color: black ;
+  text-transform: uppercase;
+  text-align: left;
+}
+.modal-title{
+  font-size: 20px;
+  color: black ;
+  font-style: italic;
+}
+
+.style{
+  font-size: 13px;
+  color: black ;
+}
+.about{
+  max-height: 500px; 
+  object-fit: cover;
+
+}
+.bg2{            /*image background section 12 peaple are */
+  background-image:url('/public/img/Main.png') ;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+   .hove:hover {
+      background-color: white !important;
+      color: black !important;
+  }
+  
+  .nav-item a:hover {
+      color: #000000 !important;
+  }
+
+ .form-check-input {
+  transform: scale(1); /* Adjust size */
+  width: 20px; /* Set a fixed width */
+  height: 20px; /* Set a fixed height */
+}
+
+  .modal-header .btn-close {
+      font-size: 0.8rem; /* Adjust the size */
+      width: 20px;  /* Smaller width */
+      height: 20px; /* Smaller height */
+  }        
+
+  .font{
+      font-size: 15px;
+     color: rgb(255, 249, 240);
+  }
+
+  .content {
+      font-size: 15px;
+      color: black ;
+      text-transform: uppercase;
+      text-align: left;
+  }
+  .modal-title{
+      font-size: 20px;
+      color: black ;
+      font-style: italic;
+  }
+
+  .style{
+      font-size: 13px;
+      color: black ;
+  }
+
+  .font-our{
+    font-size: 20px;
+    color: #f1dcb6;
+  }
+  .insights-slogan {
+    font-size: 25px;
+    font-style: italic;
+    font-weight: bold;
+    color: #ffffff;
+    margin-top: 20px;
+}
+
+  .supporter-card {
+    background: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    padding: 12px;
+    display: inline-block;
+    text-align: center;
+    border-radius: 12px;
+    width: 80%; /* or fixed width like 300px */
+    max-width: 320px;
+    transition: transform 0.3s ease;
+    position: relative;
+}
+
+.supporter-card img {
+    width: 100%;
+    border-radius: 8px;
+    object-fit: cover;
+    aspect-ratio: 1/1; /* makes images square */
+}
+
+.supporter-card .caption {
+    margin-top: 10px;
+    font-style: italic;
+    font-weight: bold;
+    color: #444;
+    font-size: 1.1rem;
+}
+
+.supporter-card:hover {
+    transform: translateY(-8px);
+}
+
+/* Optional: Add a subtle Egyptian-themed border */
+.supporter-card::before {
+    content: '';
+    position: absolute;
+    top: 6px;
+    bottom: 6px;
+    left: 6px;
+    right: 6px;
+    border: 2px solid #c2a04f;
+    pointer-events: none;
+    border-radius: 10px;
+}
+.animation {
+  display: inline-block;
+  animation: floatUpDown 2.5s ease-in-out infinite;
+}
+
+@keyframes floatUpDown {
+  0% {
+      transform: translateY(0);
+  }
+  50% {
+      transform: translateY(-15px); /* Move up */
+  }
+  100% {
+      transform: translateY(0); /* Move back down */
+  }
+}
+/*gggggg*/  
+
+  .about{
+    max-height: 500px; 
+    object-fit: cover;
+
+  }
+  .bg2{            /*image background section 12 peaple are */
+    background-image:url('/public/img/Main.png') ;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.header {
+    background-image: url('/public/img/faculty2.jpg'); 
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 100%;
+    height: 70vh;
+}
+
+.hove:hover, .hove:focus {
+  background-color: white !important;
+  color: black !important;
+  border-color: black !important;
+}
+
+.nav-item button:hover {
+  color: #000000 !important;
+}
+
+   .form-check-input {
+    transform: scale(1); /* Adjust size */
+    width: 20px; /* Set a fixed width */
+    height: 20px; /* Set a fixed height */
+}
+
+    .modal-header .btn-close {
+        font-size: 0.8rem; /* Adjust the size */
+        width: 20px;  /* Smaller width */
+        height: 20px; /* Smaller height */
+    }        
+  
+    .font{
+        font-size: 15px;
+       color: rgb(255, 249, 240);
+    }
+
+    .content {
+        font-size: 15px;
+        color: black ;
+        text-transform: uppercase;
+        text-align: left;
+    }
+    .modal-title{
+        font-size: 20px;
+        color: black ;
+        font-style: italic;
+    }
+
+    .style{
+        font-size: 13px;
+        color: black ;
+    }
+
+   
+@media (max-width: 768px) { 
+  .pricing{
+    padding-left: 50px;
+    background-color: none;
+  }
+  .mob{
+    flex-direction: column;
+  }
+  .mob_txt{
+    font-size: 50px;
+  }
+  .mob_background{
+    background-image:url('/public/img/egpt.jpeg') ;
+    background-size: 100%;
+  }
+}
