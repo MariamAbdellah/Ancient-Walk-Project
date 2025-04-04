@@ -105,7 +105,7 @@ const fetchArtifactData = async (file, language) => {
       description: data.artifact_info?.description || "Not available",
       material: data.artifact_info?.material || "Not available",
       timePeriod: data.artifact_info?.time_period || "Not available",
-      restorationStatus: data.artifact_info?.damage_status || "Not available",
+      restorationStatus: data.damage_status || "Not available",
       // damageStatus: data.damage_status ?? false,
       // warnings: data.warnings || []
     });
