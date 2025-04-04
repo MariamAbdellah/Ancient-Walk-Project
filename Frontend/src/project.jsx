@@ -101,17 +101,14 @@ const fetchArtifactData = async (file, language) => {
     if (!response.ok) throw new Error("Failed to fetch artifact data");
 
     const data = await response.json();
-    console.log("API Response:", data); // Debugging
-
     setArtifactData({
       description: data.artifact_info?.description || "Not available",
       material: data.artifact_info?.material || "Not available",
       timePeriod: data.artifact_info?.time_period || "Not available",
-      // restorationStatus: data.artifact_info?.damage_status || "Not available",
-      restorationStatus: data.damage_status || "Status unknown"  // Use the label directly
+      restorationStatus: data.artifact_info?.damage_status || "Not available",
       // damageStatus: data.damage_status ?? false,
-      // warnings: data.warnings || []
-    });
+      // warnings: data.warnings || []
+    });
   } catch (error) {
     console.error("Error fetching data:", error);
   }
@@ -124,7 +121,6 @@ useEffect(() => {
     fetchArtifactData(imageSrc, selectedLanguage);
   }
 }, [selectedLanguage]);
-
 
 
     return (
@@ -251,9 +247,12 @@ useEffect(() => {
         <h4 className="text-center mb-3">Artifact Details</h4>
         <table className="table table-borderless text-white glass table">
             <tbody>
+            <h5 className="text-center d-flex flex-column align-items-center mb-2">First</h5>
                 <tr><th>Description</th><td>{artifactData.description || "Loading..."}</td></tr>
                 <tr><th>Material</th><td>{artifactData.material || "Loading..."}</td></tr>
                 <tr><th>Time Period</th><td>{artifactData.timePeriod || "Loading..."}</td></tr>
+                <br></br>
+                <h5 className="text-center mb-2">Second</h5>
                 <tr><th>Restoration Status</th><td>{artifactData.restorationStatus || "Loading..."}</td></tr>
             </tbody>
         </table>
