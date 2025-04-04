@@ -18,14 +18,21 @@
   height: 500px;
 }
 .glass-card {
+  max-height: 400px; /* Adjust as needed */
+  width: 70%;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(15px);
   border-radius: 15px;
   padding: 20px;
-  width: 50%;
   overflow-y: auto;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass table {
+
+  table-layout: fixed; /* Ensures consistent column widths */
+  width: 100%;
 }
 
 /* Glassmorphic buttons */
@@ -115,6 +122,7 @@
   overflow: hidden;
 }
 .project-background {
+  overflow-x: hidden;
   overflow-y: auto;
   background-image: url("/public/img/propg.jpeg");
   background-attachment: fixed;
@@ -122,7 +130,6 @@
   background-position: center;
   height: 100vh;
   width: 100%;
-  overflow: hidden;
 }
 .header {
   text-align: right;
@@ -270,6 +277,15 @@
 }
 
 @media (max-width: 768px) {
+  .glass-card {
+    max-height: 600px; /* Smaller height on mobile */
+  }
+
+  .glass-card th, 
+  .glass-card td {
+    display: block; /* Stack rows on mobile */
+    width: 100%;
+  }
   .pricing {
     padding-left: 50px;
   }

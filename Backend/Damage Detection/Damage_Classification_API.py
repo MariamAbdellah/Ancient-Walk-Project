@@ -33,7 +33,10 @@ def predict():
 
         # Make prediction
         prediction = model.predict(processed_image)
-        predicted_class = int(np.argmax(prediction))  # Convert to integer class (0 or 1)
+        print("Raw prediction probabilities:", prediction[0][0])  # Debug output
+
+        predicted_class = int((prediction[0][0] > 0.5).astype(int))   #int(np.argmax(prediction))  # Convert to integer class (0 or 1)
+        print("Predicted class:", predicted_class)  # Debug output
 
         # Convert class to human-readable label
         result = class_labels[predicted_class]

@@ -107,7 +107,8 @@ const fetchArtifactData = async (file, language) => {
       description: data.artifact_info?.description || "Not available",
       material: data.artifact_info?.material || "Not available",
       timePeriod: data.artifact_info?.time_period || "Not available",
-      restorationStatus: data.artifact_info?.damage_status || "Not available",
+      // restorationStatus: data.artifact_info?.damage_status || "Not available",
+      restorationStatus: data.damage_status || "Status unknown"  // Use the label directly
       // damageStatus: data.damage_status ?? false,
       // warnings: data.warnings || []
     });
@@ -220,7 +221,6 @@ useEffect(() => {
       </header>
  <section className="d-flex flex-column align-items-center py-5">
     <h2 className="text-center mb-4 fw-bold text-white text-uppercase ancint">Discover Your Artifact.</h2>
-
     {/* Upload & Capture Buttons */}
     <div className="d-flex justify-content-center gap-4 mb-4">
         <label className="glass-btn">
@@ -249,7 +249,7 @@ useEffect(() => {
     {/* Artifact Details Card */}
     <div className="glass-card text-white p-4">
         <h4 className="text-center mb-3">Artifact Details</h4>
-        <table className="table table-borderless text-white">
+        <table className="table table-borderless text-white glass table">
             <tbody>
                 <tr><th>Description</th><td>{artifactData.description || "Loading..."}</td></tr>
                 <tr><th>Material</th><td>{artifactData.material || "Loading..."}</td></tr>

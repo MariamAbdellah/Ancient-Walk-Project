@@ -168,7 +168,7 @@ export default function About() {
 
       <div className="row g-4 justify-content-center">
         {/* Member 1 */}
-        <div className="col-6 col-md-4 col-lg-3">
+        <div className="col-6 col-md-4 col-lg-4">
           <div className="card border-0 shadow-sm team-card">
           <img src="img/janaa.jpg" className="card-img-top rounded-circle p-3" alt="Team Member" />
             <h5 className="card-title text-dark fw-bold">Jana Morci</h5>
@@ -177,7 +177,7 @@ export default function About() {
         </div>
 
         {/* Member 2 */}
-        <div className="col-6 col-md-4 col-lg-3">
+        <div className="col-6 col-md-4 col-lg-4">
           <div className="card border-0 shadow-sm team-card">
             <img src="img/me.jpg" className="card-img-top rounded-circle p-3" alt="Team Member" />
             <h5 className="card-title text-dark fw-bold">Fatma Gamal</h5>
@@ -186,25 +186,27 @@ export default function About() {
         </div>
 
         {/* Member 3 */}
-        <div className="col-6 col-md-4 col-lg-3">
+        <div className="col-6 col-md-4 col-lg-4">
           <div className="card border-0 shadow-sm team-card">
-            <img src="img/member.jpg" className="card-img-top rounded-circle p-3" alt="Team Member" />
-            <h5 className="card-title text-dark fw-bold">Mohamed Rasmy</h5>
-            <Link to="#" target="_blank" className="social-icon fs-5"><i className="bi bi-linkedin"></i></Link>
+            <img src="img/Mariamm.jpg" className="card-img-top rounded-circle p-3" alt="Team Member" />
+            <h5 className="card-title text-dark fw-bold">Mariam Mostafa</h5>
+            <Link to="https://eg.linkedin.com/in/mariam-mostafa-8992842b4" target="_blank" className="social-icon fs-5"><i className="bi bi-linkedin"></i></Link>
           </div>
         </div>
+        
 
         {/* Member 4 */}
-        <div className="col-6 col-md-4 col-lg-3">
+        <div className="col-6 col-md-4 col-lg-4">
           <div className="card border-0 shadow-sm team-card">
-            <img src="img/member.jpg" className="card-img-top rounded-circle p-3" alt="Team Member" />
-            <h5 className="card-title text-dark fw-bold">Maria Mina</h5>
-            <Link to="#" target="_blank" className="social-icon fs-5"><i className="bi bi-linkedin"></i></Link>
+            <img src="img/mohamed.jpg" className="card-img-top rounded-circle p-3" alt="Team Member" />
+            <h5 className="card-title text-dark fw-bold">Mohamed Rasmy</h5>
+            <Link to="https://www.linkedin.com/in/mohamad-rasmy" target="_blank" className="social-icon fs-5"><i className="bi bi-linkedin"></i></Link>
           </div>
         </div>
+       
 
         {/* Member 5 */}
-        <div className="col-6 col-md-4 col-lg-3">
+        <div className="col-6 col-md-4 col-lg-4">
           <div className="card border-0 shadow-sm team-card">
             <img src="img/nadia.jpg" className="card-img-top rounded-circle p-3" alt="Team Member" />
             <h5 className="card-title text-dark fw-bold">Nadia Hesham</h5>
@@ -215,10 +217,10 @@ export default function About() {
         </div>
 
         {/* Member 6 */}
-        <div className="col-6 col-md-4 col-lg-3">
+        <div className="col-6 col-md-4 col-lg-4">
           <div className="card border-0 shadow-sm team-card">
             <img src="img/member.jpg" className="card-img-top rounded-circle p-3" alt="Team Member" />
-            <h5 className="card-title text-dark fw-bold">Mariam Mostafa</h5>
+            <h5 className="card-title text-dark fw-bold">Maria Mina</h5>
             <Link to="#" target="_blank" className="social-icon fs-5"><i className="bi bi-linkedin"></i></Link>
           </div>
         </div>

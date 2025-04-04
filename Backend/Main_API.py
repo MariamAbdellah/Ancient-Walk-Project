@@ -73,7 +73,7 @@ def analyze_artifact():
 
         # 3. Prepare combined response (without images)
         response = {
-            "damage_status": damage_result.get("is_damaged", False),
+            "damage_status": damage_result.get("label", "Unknown Status"),  # Get the label directly
             # "damage_confidence": damage_result.get("confidence", 0),
             "artifact_info": {
                 "description": retrieval_result.get("Description"),
