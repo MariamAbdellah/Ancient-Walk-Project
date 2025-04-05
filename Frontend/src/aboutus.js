@@ -219,9 +219,9 @@ export default function About() {
         {/* Member 6 */}
         <div className="col-6 col-md-4 col-lg-4">
           <div className="card border-0 shadow-sm team-card">
-            <img src="img/member.jpg" className="card-img-top rounded-circle p-3" alt="Team Member" />
+            <img src="img/mariaa.jpg" className="card-img-top rounded-circle p-3" alt="Team Member" />
             <h5 className="card-title text-dark fw-bold">Maria Mina</h5>
-            <Link to="#" target="_blank" className="social-icon fs-5"><i className="bi bi-linkedin"></i></Link>
+            <Link to="https://www.linkedin.com/in/maria-mina-fekry" target="_blank" className="social-icon fs-5"><i className="bi bi-linkedin"></i></Link>
           </div>
         </div>
       </div>
