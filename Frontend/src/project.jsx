@@ -169,7 +169,6 @@ const ArtifactUpload = () => {
 
   const handleLoginSubmit = (e) => {
     e.preventDefault();
-    // Implement login logic here
     console.log("Login submitted");
   };
 
