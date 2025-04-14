@@ -134,33 +134,14 @@ const ArtifactUpload = () => {
     setRestoredImageSrc(null); // Reset previous restored image
 
     try {
-      // Option 1: Fetch restored image without re-sending the original image
-      // Assumes backend stores the latest uploaded image per session
       const response = await fetch(
         process.env.REACT_APP_RESTORE_URL || "http://localhost:5000/restored-image",
         {
           method: "GET",
-          headers: {
-            // Include authentication headers if needed
-            // Authorization: `Bearer ${token}`,
-          },
           signal: AbortSignal.timeout(10000),
         }
       );
 
-      // Option 2: If backend requires the original image, uncomment this:
-      /*
-      const formData = new FormData();
-      formData.append("image", selectedFile);
-      const response = await fetch(
-        process.env.REACT_APP_RESTORE_URL || "http://localhost:5000/restored-image",
-        {
-          method: "POST",
-          body: formData,
-          signal: AbortSignal.timeout(10000),
-        }
-      );
-      */
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -171,15 +152,7 @@ const ArtifactUpload = () => {
       const imageUrl = URL.createObjectURL(blob);
       setRestoredImageSrc(imageUrl);
 
-      // If backend returns base64 instead, use this:
-      /*
-      const data = await response.json();
-      if (data.imageBase64) {
-        setRestoredImageSrc(`data:image/jpeg;base64,${data.imageBase64}`);
-      } else {
-        throw new Error("No restored image data received.");
-      }
-      */
+      
     } catch (error) {
       console.error("Error fetching restored image:", error);
       setError("Failed to fetch restored image. Please try again.");
