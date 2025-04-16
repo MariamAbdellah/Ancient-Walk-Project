@@ -80,12 +80,12 @@ def retrieve_artifact():
         if not image_file:
             return jsonify({"error": "No image uploaded"}), 400
 
-        desired_lang = request.form.get("language", "en")
-        if not desired_lang:
-            desired_lang = "en"
+        # desired_lang = request.form.get("language", "en")
+        # if not desired_lang:
+        #     desired_lang = "en"
 
-        if desired_lang not in googletrans.LANGUAGES:
-            desired_lang = "en"
+        # if desired_lang not in googletrans.LANGUAGES:
+        #     desired_lang = "en"
 
         # 2. Process image and retrieve info
         image = Image.open(io.BytesIO(image_file.read()))
@@ -96,13 +96,19 @@ def retrieve_artifact():
 
         # if not info.empty
         # 3. Translate the info
-        translated_info = {
-            # "About this Artifact": await translate_text("About this Artifact:", "en", desired_lang),
-            "Description": translate_text(info["Description"], "en", desired_lang),
-            "Material": translate_text(info["Material"], "en", desired_lang),
-            "Time Period": translate_text(info["Time Period"], "en", desired_lang),
-            # "Restoration Status": await translate_text(info["Restoration Status"], "en", desired_lang)
+
+        information = {
+            "Description": info["Description"],
+            "Material": info["Material"],
+            "Time Period": info["Time Period"]
         }
+
+        # translated_info = {
+        #     "Description": translate_text(info["Description"], "en", desired_lang),
+        #     "Material": translate_text(info["Material"], "en", desired_lang),
+        #     "Time Period": translate_text(info["Time Period"], "en", desired_lang)
+        #     # "Restoration Status": await translate_text(info["Restoration Status"], "en", desired_lang)
+        # }
 
         # # Add paths/URLs of retrieved images to the response
         # response_data = {
@@ -113,7 +119,7 @@ def retrieve_artifact():
         #     ]
         # }
 
-        return jsonify(translated_info)
+        return jsonify(information)
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -169,17 +175,17 @@ def load_saved_features(data_path):
 #         print(f"Translation failed: {e}")
 #         return text  # Fallback to original text
 
-def translate_text(text, src_lang, dest_lang):
-    global translator  # Explicitly use the global variable
-    if not text or str(text).strip() == "":
-        return text  # Skip empty text
+# def translate_text(text, src_lang, dest_lang):
+#     global translator  # Explicitly use the global variable
+#     if not text or str(text).strip() == "":
+#         return text  # Skip empty text
     
-    try:
-        translation = translator.translate(text, src=src_lang, dest=dest_lang)
-        return translation.text
-    except Exception as e:
-        print(f"Translation failed for '{text}': {e}")
-        return text  # Return original on failure
+#     try:
+#         translation = translator.translate(text, src=src_lang, dest=dest_lang)
+#         return translation.text
+#     except Exception as e:
+#         print(f"Translation failed for '{text}': {e}")
+#         return text  # Return original on failure
 
 
 def retrieve_artifact_info(image, df, device, k=10, threshold=0.55):

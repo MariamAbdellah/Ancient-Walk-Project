@@ -101,6 +101,7 @@ const fetchArtifactData = async (file, language) => {
     if (!response.ok) throw new Error("Failed to fetch artifact data");
 
     const data = await response.json();
+    console.log("API Response:", data);
     setArtifactData({
       description: data.artifact_info?.description || "Not available",
       material: data.artifact_info?.material || "Not available",

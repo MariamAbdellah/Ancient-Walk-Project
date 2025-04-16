@@ -5,6 +5,10 @@ import concurrent.futures
 from PIL import Image
 import io
 
+import googletrans
+from googletrans import Translator
+
+
 app = Flask(__name__)
 # Enable CORS for all routes
 CORS(app, resources={
@@ -19,6 +23,8 @@ CORS(app, resources={
 DAMAGE_API_URL = "http://localhost:5001/predict"  # Damage API (different port)
 RETRIEVAL_API_URL = "http://localhost:5002/retrieve"  # Retrieval API (main port)
 TIMEOUT = 10  # seconds
+
+translator = Translator()
 
 def validate_image(file):
     """Ensure the uploaded file is a valid image"""
@@ -48,12 +54,24 @@ def call_retrieval_api(image_bytes, language="en"):
         response = requests.post(
             RETRIEVAL_API_URL,
             files={"image": ("image.jpg", image_bytes, "image/jpeg")},
-            data={"language": language, "skip_images": "true"},  # New parameter
+            # data={"language": language, "skip_images": "true"},  # New parameter
             timeout=TIMEOUT
         )
         return response.json() if response.ok else {"error": "Retrieval API failed"}
     except Exception as e:
         return {"error": str(e)}
+    
+def translate_text(text, src_lang, dest_lang):
+    global translator  # Explicitly use the global variable
+    if not text or str(text).strip() == "":
+        return text  # Skip empty text
+    
+    try:
+        translation = translator.translate(text, src=src_lang, dest=dest_lang)
+        return translation.text
+    except Exception as e:
+        print(f"Translation failed for '{text}': {e}")
+        return text  # Return original on failure
 
 @app.route("/analyze", methods=["POST"])
 def analyze_artifact():
@@ -61,6 +79,11 @@ def analyze_artifact():
         # 1. Get input
         image_file = request.files["image"]
         language = request.form.get("language", "en")
+        if not language:
+            language = "en"
+
+        if language not in googletrans.LANGUAGES:
+            language = "en"
         image_bytes = image_file.read()
 
         # 2. Call both APIs in parallel
@@ -72,17 +95,32 @@ def analyze_artifact():
             retrieval_result = retrieval_future.result()
 
         # 3. Prepare combined response (without images)
+
+
         response = {
-            "damage_status": damage_result.get("label", "Unknown Status"),  # Get the label directly
+            "damage_status": translate_text(damage_result.get("label", "Unknown Status"), "en", language),  # Get the label directly
             # "damage_confidence": damage_result.get("confidence", 0),
             "artifact_info": {
-                "description": retrieval_result.get("Description"),
-                "material": retrieval_result.get("Material"),
-                "time_period": retrieval_result.get("Time Period"),
+                "description": translate_text(retrieval_result.get("Description"), "en", language),
+                "material": translate_text(retrieval_result.get("Material"), "en", language),
+                "time_period": translate_text(retrieval_result.get("Time Period"), "en", language),
                 # "restoration_status": retrieval_result.get("info", {}).get("Restoration Status")
             },
             "warnings": []
         }
+
+
+        # response = {
+        #     "damage_status": damage_result.get("label", "Unknown Status"),  # Get the label directly
+        #     # "damage_confidence": damage_result.get("confidence", 0),
+        #     "artifact_info": {
+        #         "description": retrieval_result.get("Description"),
+        #         "material": retrieval_result.get("Material"),
+        #         "time_period": retrieval_result.get("Time Period"),
+        #         # "restoration_status": retrieval_result.get("info", {}).get("Restoration Status")
+        #     },
+        #     "warnings": []
+        # }
 
         # 4. Error handling
         if "error" in damage_result:
