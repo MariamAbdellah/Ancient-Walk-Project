@@ -19,7 +19,7 @@ model_path = r"D:\vs code\GP Back\Damage Detection\damage_classification_model.k
 model = tf.keras.models.load_model(model_path)
 
 # Define label mapping
-class_labels = {0: "No Restoration Needed", 1: "Needs Restoration"}
+class_labels = {0: "No Restoration Needed", 1: "Needs To Be Restored"}
 
 @app.route("/predict", methods=["POST"])
 def predict():

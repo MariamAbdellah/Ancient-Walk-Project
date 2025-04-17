@@ -21,7 +21,8 @@ CORS(app, resources={
 
 # Configuration
 DAMAGE_API_URL = "http://localhost:5001/predict"  # Damage API (different port)
-RETRIEVAL_API_URL = "http://localhost:5002/retrieve"  # Retrieval API (main port)
+RETRIEVAL_API_URL = "http://localhost:5002/retrieve"  # Retrieval API 
+RESTORATION_API_URL = "http://localhost:5003/restore"
 TIMEOUT = 10  # seconds
 
 translator = Translator()
@@ -72,6 +73,18 @@ def translate_text(text, src_lang, dest_lang):
     except Exception as e:
         print(f"Translation failed for '{text}': {e}")
         return text  # Return original on failure
+    
+def call_restoration_api(image_bytes):
+    """Call Restoration API"""
+    try:
+        response = requests.post(
+            RESTORATION_API_URL,
+            files={"image": ("image.jpg", image_bytes, "image/jpeg")},
+            timeout=TIMEOUT
+        )
+        return response.json() if response.ok else {"error": "Restoration API failed"}
+    except Exception as e:
+        return {"error": str(e)}
 
 @app.route("/analyze", methods=["POST"])
 def analyze_artifact():
@@ -93,6 +106,9 @@ def analyze_artifact():
 
             damage_result = damage_future.result()
             retrieval_result = retrieval_future.result()
+
+        
+        call_restoration_api(image_bytes)
 
         # 3. Prepare combined response (without images)
 
