@@ -6,6 +6,12 @@ import './App.css';
 import './index.css';
 
 export default function About() {
+  const currentUser = {
+    id: '123',
+    name: 'Nada',
+    email: 'Nada@example.com',
+    token: 'abc123xyz'
+  };
     return (
         <>
         <div className='bg'>
@@ -37,20 +43,30 @@ export default function About() {
                     <li className="nav-item">
                       <Link className="nav-link text-uppercase text-white font" to="/project">Project</Link>
                     </li>
+                        {currentUser ? (
                     <li className="nav-item">
-                                <button
-                                  className="nav-link fw-bold mx-1 text-uppercase text-white btn hover"
-                                  data-bs-toggle="modal"
-                                  data-bs-target="#loginModal"
-                                >
-                                  Login
-                                </button>
-                              </li>
-                              <li className="nav-item">
-                                <button className="nav-link  btn btn-dark  mx-1 hove">
-                                  <Link className='text-white font text-uppercase fw-bold text-decoration-none' to="/register">Register</Link> 
-                                </button>
-                              </li>
+                        <span className="nav-link text-uppercase text-white font">
+                        <i class="bi bi-person-circle"></i> {currentUser.email.split('@')[0]} 
+                        </span>
+                    </li>
+                    ) : (
+                    <>
+                        <li className="nav-item">
+                            <button
+                                className="nav-link fw-bold mx-1 text-uppercase text-white btn hover"
+                                data-bs-toggle="modal"
+                                data-bs-target="#loginModal"
+                            >
+                                Login
+                            </button>
+                        </li>
+                        <li className="nav-item">
+                            <button className="nav-link btn btn-dark mx-1 hove">
+                                <Link className='text-white font text-uppercase fw-bold text-decoration-none' to="/register">Register</Link> 
+                            </button>
+                        </li>
+                    </>
+                )}
                           </ul>
                         </div>
                       </div>
