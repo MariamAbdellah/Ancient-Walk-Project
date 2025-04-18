@@ -127,7 +127,7 @@ export default function Register() {
                 Accept Terms & Conditions
             </label>
         </div>
-        <button type="submit" className="btn btn-dark w-100 mt-3">Create Account</button>
+        <button type="submit" className="btn btn-dark w-100 mt-3" >Create Account</button>
        
     </form>
     
@@ -136,4 +136,6 @@ export default function Register() {
     );
 };
 
-// export default Register;
+ //export default Register;
+//the code all OK before convert register page to dynamic for DEMO
+// note: i just modify in register file only 
