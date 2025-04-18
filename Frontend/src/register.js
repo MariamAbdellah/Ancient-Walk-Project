@@ -249,3 +249,32 @@ export default function Register() {
         </div>
     );
 }
+
+// Commits on Apr 19, 2025
+// after convert registar to dynamic, note: i change in project & aboutus pages because of
+//  (currentuser) appear as hard code so i just change in navbar(collabsbar) only .
+// add this after <li> project </li>
+/*  {currentUser ? (
+                    <li className="nav-item">
+                        <span className="nav-link text-uppercase text-white font">
+                        <i class="bi bi-person-circle"></i> {currentUser.email.split('@')[0]} 
+                        </span>
+                    </li>
+                    ) : (
+                    <>
+                        <li className="nav-item">
+                            <button
+                                className="nav-link fw-bold mx-1 text-uppercase text-white btn hover"
+                                data-bs-toggle="modal"
+                                data-bs-target="#loginModal"
+                            >
+                                Login
+                            </button>
+                        </li>
+                        <li className="nav-item">
+                            <button className="nav-link btn btn-dark mx-1 hove">
+                                <Link className='text-white font text-uppercase fw-bold text-decoration-none' to="/register">Register</Link> 
+                            </button>
+                        </li>
+                    </>
+                )}*/
