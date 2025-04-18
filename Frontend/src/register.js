@@ -52,13 +52,13 @@ export default function Register() {
             const admin = { email: 'admin@ancientwalk.com', password: 'admin123', role: 'admin' };
             setCurrentUser(admin);
             localStorage.setItem('currentUser', JSON.stringify(admin));
-            alert('Welcome Admin! Redirecting to project page...');
-            navigate('/project');
+            alert('Welcome Admin!');
+            //navigate('/');
         } else if (user) {
             setCurrentUser(user);
             localStorage.setItem('currentUser', JSON.stringify(user));
-            alert(`Hello ${user.email.split('@')[0]}! Redirecting to project page...`);
-            navigate('/project');
+            alert(`Hello ${user.email.split('@')[0]}`);
+          //navigate('/');
         } else {
             alert('Invalid credentials. Please try again or register.');
         }
