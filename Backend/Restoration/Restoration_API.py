@@ -43,13 +43,13 @@ def yolo_prediction(image):
                 x1, y1, x2, y2 = map(int, box.tolist())
                 best_crop = image_cv[y1:y2, x1:x2]
 
-    if best_crop is not None:
-        # Save the cropped image to disk
-        print("Best Crop is not NONE")
-        cv2.imwrite(save_path, cv2.cvtColor(best_crop, cv2.COLOR_BGR2RGB))
-        cv2.imshow("Cropped Monument", best_crop)
-        cv2.waitKey(0)  # Waits for a key press to close
-        cv2.destroyAllWindows()
+    # if best_crop is not None:
+    #     # Save the cropped image to disk
+    #     print("Best Crop is not NONE")
+    #     cv2.imwrite(save_path, cv2.cvtColor(best_crop, cv2.COLOR_BGR2RGB))
+    #     cv2.imshow("Cropped Monument", best_crop)
+    #     cv2.waitKey(0)  # Waits for a key press to close
+    #     cv2.destroyAllWindows()
         
     return best_crop
     

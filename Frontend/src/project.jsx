@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { Link } from 'react-router-dom';
 
+
 const languages = [
   { code: "en", name: "English" },
   { code: "ar", name: "العربية" },
@@ -19,6 +20,13 @@ const languages = [
   { code: "it", name: "Italiano" },
   { code: "pt", name: "Português" },
 ];
+
+const currentUser = {
+  id: '123',
+  name: 'Nada',
+  email: 'Nada@example.com',
+  token: 'abc123xyz'
+};
 
 // Language Selector Component
 const LanguageSelector = ({ onLanguageChange }) => {
@@ -141,14 +149,30 @@ const ArtifactUpload = () => {
                     <li className="nav-item">
                       <Link className="nav-link text-uppercase text-white font" to="/project">Project</Link>
                     </li>
-                    <li className="nav-item">
-                      <button className="nav-link fw-bold mx-1 text-uppercase text-white btn hover" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
-                    </li>
-                    <li className="nav-item">
-                      <button className="nav-link btn btn-dark mx-1 hove">
-                        <Link className='text-white font text-uppercase fw-bold text-decoration-none' to="/register">Register</Link>
-                      </button>
-                    </li>
+                     {currentUser ? (
+                          <li className="nav-item">
+                              <span className="nav-link text-uppercase text-white font">
+                              <i class="bi bi-person-circle"></i> {currentUser.email.split('@')[0]} 
+                              </span>
+                          </li>
+                         ) : (
+                          <>
+                              <li className="nav-item">
+                                  <button
+                                      className="nav-link fw-bold mx-1 text-uppercase text-white btn hover"
+                                      data-bs-toggle="modal"
+                                      data-bs-target="#loginModal"
+                                  >
+                                      Login
+                                  </button>
+                              </li>
+                              <li className="nav-item">
+                                  <button className="nav-link btn btn-dark mx-1 hove">
+                                      <Link className='text-white font text-uppercase fw-bold text-decoration-none' to="/register">Register</Link> 
+                                  </button>
+                              </li>
+                          </>
+                      )}
                   </ul>
                 </div>
               </div>
