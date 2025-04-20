@@ -276,6 +276,25 @@
   color: #000000 !important;
 }
 
+
+.image-container {
+  position: relative;
+  display: inline-block;
+}
+
+.uploaded-image {
+  width: 100%;
+  height: auto;
+}
+
+.drawing-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: crosshair;
+}
+
+
 @media (max-width: 768px) {
   .glass-card {
     max-height: 600px; /* Smaller height on mobile */
