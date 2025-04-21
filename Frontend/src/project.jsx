@@ -69,7 +69,8 @@ const ArtifactUpload = () => {
   const [restoredImage, setRestoredImage] = useState(null);
   const [fileName, setFileName] = useState("");
 
-  const previewImage = (event) => {
+  // When photo is uploaded or captured
+  const handleImageUpload = async (event) => {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
@@ -79,46 +80,45 @@ const ArtifactUpload = () => {
       reader.readAsDataURL(file);
       setSelectedFile(file);
       setFileName(file.name);
+
+      // Fetch artifact info immediately after upload
+      await fetchArtifactData(file, selectedLanguage);
     }
   };
 
+  //  Only called when "Restore" button is pressed
   const handleRestoration = async () => {
     if (selectedFile) {
-      // Call the original artifact info API
-      await fetchArtifactData(selectedFile, selectedLanguage);
-  
-      // Call the new restoration image API
       await fetchRestoredImage(selectedFile);
     }
   };
-  
+
   const fetchRestoredImage = async (file) => {
     const formData = new FormData();
     formData.append("image", file);
-  
+
     try {
       const response = await fetch("http://localhost:5003/restore", {
         method: "POST",
         body: formData,
       });
-  
+
       if (!response.ok) throw new Error("Failed to fetch restored image");
-  
+
       const data = await response.json();
       console.log("Restoration API Response:", data);
-  
+
       if (data.restored_image) {
         setRestoredImage(data.restored_image);
       } else {
         setRestoredImage(null);
       }
-  
+
     } catch (error) {
       console.error("Error fetching restored image:", error);
       setRestoredImage(null);
     }
   };
-  
 
   const fetchArtifactData = async (file, language) => {
     const formData = new FormData();
@@ -151,8 +151,8 @@ const ArtifactUpload = () => {
   return (
     <div className='project-background'>
       <header>
-        {/* Navbar */}
-        <div className="container-fluid d-flex justify-content-between align-items-center mb-5 mob">
+         {/* Navbar */}
+         <div className="container-fluid d-flex justify-content-between align-items-center mb-5 mob">
           <div className="row d-flex justify-content-center align-items-center order-3 order-md-3 mob">
             <nav className="navbar navbar-expand-lg navbar-light fw-bold">
               <div className="container">
@@ -241,12 +241,12 @@ const ArtifactUpload = () => {
         <div className="d-flex justify-content-center gap-4 mb-4 row">
           <label className="glass-btn col-4 col-md-3 col-lg-2">
             Upload Photo
-            <input type="file" accept="image/*" className="d-none" onChange={previewImage} />
+            <input type="file" accept="image/*" className="d-none" onChange={handleImageUpload} />
           </label>
 
           <label className="glass-btn col-4 col-md-3 col-lg-2">
             Capture Photo
-            <input type="file" accept="image/*" capture="environment" className="d-none" onChange={previewImage} />
+            <input type="file" accept="image/*" capture="environment" className="d-none" onChange={handleImageUpload} />
           </label>
 
           <button
