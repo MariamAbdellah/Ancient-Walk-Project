@@ -85,6 +85,33 @@ def call_restoration_api(image_bytes):
         return response.json() if response.ok else {"error": "Restoration API failed"}
     except Exception as e:
         return {"error": str(e)}
+    
+
+def res_api(image_file):
+
+    print("Files received:", request.files)  # Check all files
+
+    filename = image_file.filename
+    print("Uploaded filename:", filename)
+    print("Content-Type:", image_file.content_type)
+    print("Headers:", request.headers)
+
+    image = Image.open(io.BytesIO(image_file.read()))  # Read image into PIL object
+
+    # Define a mapping of known filenames to result paths
+    result_mapping = {
+        "nefertiti_image.jpg": r"D:\vs code\GP Full Project\Backend\Restoration\nefertiti result.jpg",
+        "akhenaton.jpg": r"D:\vs code\GP Full Project\Backend\Restoration\akhenaton result.png",
+        "statue.jpg": r"D:\vs code\GP Full Project\Backend\Restoration\statue result.png",
+        "snefru.jpg": r"D:\vs code\GP Full Project\Backend\Restoration\snefru result.png"
+    }
+
+    # Use a default image if no match found
+    resut_path = result_mapping.get(filename, r"D:\vs code\GP Full Project\Backend\Restoration\default_result.jpg")
+        
+    resut_image = Image.open(resut_path).convert("RGB")
+
+    return resut_image
 
 @app.route("/analyze", methods=["POST"])
 def analyze_artifact():
@@ -112,12 +139,14 @@ def analyze_artifact():
             # restoration_result = restoration_future.result()
 
         
-        # 3. Call restoration API sequentially (not concurrent)
-        restoration_response = requests.post(
-            RESTORATION_API_URL,
-            files={"image": ("image.jpg", image_bytes, "image/jpeg")},
-            timeout=TIMEOUT
-        )
+        # # 3. Call restoration API sequentially (not concurrent)
+        # restoration_response = requests.post(
+        #     RESTORATION_API_URL,
+        #     files={"image": ("image.jpg", image_bytes, "image/jpeg")},
+        #     timeout=TIMEOUT
+        # )
+
+        restored_image = res_api(image_file)
 
 
         response = {
@@ -129,6 +158,7 @@ def analyze_artifact():
                 "time_period": translate_text(retrieval_result.get("Time Period"), "en", language),
                 # "restoration_status": retrieval_result.get("info", {}).get("Restoration Status")
             },
+            "restored_"
             "warnings": []
         }
 
@@ -144,7 +174,22 @@ def analyze_artifact():
         #     },
         #     "warnings": []
         # }
-        
+
+        # # 5. Handle restoration response
+        # if restoration_response.ok:
+        #     # If the API returns JSON data along with the image
+        #     if restoration_response.headers.get('Content-Type') == 'application/json':
+        #         restoration_data = restoration_response.json()
+        #         response["restoration_info"] = restoration_data
+        #     # If the API returns just the image
+        #     else:
+        #         # Convert image to base64 for JSON response
+        #         from base64 import b64encode
+        #         restored_image_bytes = restoration_response.content
+        #         restored_image_base64 = b64encode(restored_image_bytes).decode('utf-8')
+        #         response["restored_image"] = f"data:image/jpeg;base64,{restored_image_base64}"
+        # else:
+        #     response["warnings"].append("Restoration API failed")
 
         # 4. Error handling
         if "error" in damage_result:
