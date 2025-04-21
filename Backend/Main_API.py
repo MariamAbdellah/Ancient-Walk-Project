@@ -99,18 +99,25 @@ def analyze_artifact():
             language = "en"
         image_bytes = image_file.read()
 
+
+
         # 2. Call both APIs in parallel
         with concurrent.futures.ThreadPoolExecutor() as executor:
             damage_future = executor.submit(call_damage_api, image_bytes)
             retrieval_future = executor.submit(call_retrieval_api, image_bytes, language)
+            # restoration_future = executor.submit(call_restoration_api, image_bytes)
 
             damage_result = damage_future.result()
             retrieval_result = retrieval_future.result()
+            # restoration_result = restoration_future.result()
 
         
-        call_restoration_api(image_bytes)
-
-        # 3. Prepare combined response (without images)
+        # 3. Call restoration API sequentially (not concurrent)
+        restoration_response = requests.post(
+            RESTORATION_API_URL,
+            files={"image": ("image.jpg", image_bytes, "image/jpeg")},
+            timeout=TIMEOUT
+        )
 
 
         response = {
@@ -137,6 +144,7 @@ def analyze_artifact():
         #     },
         #     "warnings": []
         # }
+        
 
         # 4. Error handling
         if "error" in damage_result:

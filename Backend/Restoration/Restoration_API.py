@@ -49,75 +49,75 @@ CORS(app, resources={
 
 # yolo_model_path = r"D:\vs code\GP Full Project\Backend\Restoration\best_yolov8_model.pt"
 # yolo_model = YOLO(yolo_model_path)
-save_path = r"D:\vs code\GP Full Project\Backend\Restoration"
+# save_path = r"D:\vs code\GP Full Project\Backend\Restoration"
 
 
-# Initialize models
-def initialize_models():
-    # YOLO model for monument detection
-    yolo_model_path = r"D:\vs code\GP Full Project\Backend\Restoration\best_yolov8_model.pt"
-    # yolo_model = YOLO(yolo_model_path)
+# # Initialize models
+# def initialize_models():
+#     # YOLO model for monument detection
+#     yolo_model_path = r"D:\vs code\GP Full Project\Backend\Restoration\best_yolov8_model.pt"
+#     # yolo_model = YOLO(yolo_model_path)
 
-    # Clear cache first
-    AutoencoderKL.from_pretrained("madebyollin/sdxl-vae-fp16-fix", torch_dtype=torch.float16, force_download=True)
+#     # Clear cache first
+#     AutoencoderKL.from_pretrained("madebyollin/sdxl-vae-fp16-fix", torch_dtype=torch.float16, force_download=True)
     
 
-    # try:
-    #     hf_hub_download(
-    #         repo_id="madebyollin/sdxl-vae-fp16-fix",
-    #         filename="config.json",
-    #         cache_dir="check_cache/"
-    #     )
-    #     print("Model files exist.")
-    # except Exception as e:
-    #     print(f"Error: {e}")
+#     # try:
+#     #     hf_hub_download(
+#     #         repo_id="madebyollin/sdxl-vae-fp16-fix",
+#     #         filename="config.json",
+#     #         cache_dir="check_cache/"
+#     #     )
+#     #     print("Model files exist.")
+#     # except Exception as e:
+#     #     print(f"Error: {e}")
 
-    # Initialize pipeline without VAE first
+#     # Initialize pipeline without VAE first
 
-    vae = AutoencoderKL.from_pretrained("madebyollin/sdxl-vae-fp16-fix", torch_dtype=torch.float16)
+#     vae = AutoencoderKL.from_pretrained("madebyollin/sdxl-vae-fp16-fix", torch_dtype=torch.float16)
 
-    pipe = StableDiffusionXLInpaintPipeline.from_pretrained(
-    "stabilityai/stable-diffusion-xl-base-1.0",
-    vae=vae,
-    torch_dtype=torch.float16,
-    variant="fp16",
-    use_safetensors=True
-    )
+#     pipe = StableDiffusionXLInpaintPipeline.from_pretrained(
+#     "stabilityai/stable-diffusion-xl-base-1.0",
+#     vae=vae,
+#     torch_dtype=torch.float16,
+#     variant="fp16",
+#     use_safetensors=True
+#     )
 
-    # Try loading VAE separately with error handling
-    # try:
-    #     vae = AutoencoderKL.from_pretrained(
-    #     "madebyollin/sdxl-vae-fp16-fix",
-    #     torch_dtype=torch.float16,
-    #     force_download=True,  # Forces fresh download
-    #     resume_download=False  # Prevents partial downloads
-    #     )
-    #     pipe.vae = vae
+#     # Try loading VAE separately with error handling
+#     # try:
+#     #     vae = AutoencoderKL.from_pretrained(
+#     #     "madebyollin/sdxl-vae-fp16-fix",
+#     #     torch_dtype=torch.float16,
+#     #     force_download=True,  # Forces fresh download
+#     #     resume_download=False  # Prevents partial downloads
+#     #     )
+#     #     pipe.vae = vae
 
-    # except Exception as e:
-    #     print(f"Couldn't load fp16-fix VAE, using default: {str(e)}")
-    #     pipe.vae = AutoencoderKL.from_pretrained(
-    #     "stabilityai/stable-diffusion-xl-base-1.0",
-    #     subfolder="vae",
-    #     torch_dtype=torch.float16
-    #     )
+#     # except Exception as e:
+#     #     print(f"Couldn't load fp16-fix VAE, using default: {str(e)}")
+#     #     pipe.vae = AutoencoderKL.from_pretrained(
+#     #     "stabilityai/stable-diffusion-xl-base-1.0",
+#     #     subfolder="vae",
+#     #     torch_dtype=torch.float16
+#     #     )
 
 
     
-    # Load LoRA weights (adjust path as needed)
-    lora_path = r"D:\vs code\GP Full Project\Backend\Restoration\GP_restoration_finetuned_SD_xl_base_1"
-    # lora_path = os.path.abspath("./GP_restoration_finetuned_SD_xl_base_1")
-    # Verify the path exists
-    if not os.path.exists(lora_path):
-        raise ValueError(f"LORA weights not found at: {lora_path}")
-    pipe.load_lora_weights(lora_path)
+#     # Load LoRA weights (adjust path as needed)
+#     lora_path = r"D:\vs code\GP Full Project\Backend\Restoration\GP_restoration_finetuned_SD_xl_base_1"
+#     # lora_path = os.path.abspath("./GP_restoration_finetuned_SD_xl_base_1")
+#     # Verify the path exists
+#     if not os.path.exists(lora_path):
+#         raise ValueError(f"LORA weights not found at: {lora_path}")
+#     pipe.load_lora_weights(lora_path)
     
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    pipe = pipe.to(device)
+#     device = "cuda" if torch.cuda.is_available() else "cpu"
+#     pipe = pipe.to(device)
     
-    return pipe
+#     return pipe
 
-pipe = initialize_models()
+# pipe = initialize_models()
 
 
 # Drawing page route
@@ -180,24 +180,35 @@ pipe = initialize_models()
 @app.route("/restore", methods = ["POST"])
 def restore_artifact():
     try:
+        print("Files received:", request.files)  # Check all files
+
+        if 'image' not in request.files:
+            return jsonify({"error": "No image provided"}), 400
+
         # Get image from request
         image_file = request.files["image"]
+
+        # Get original filename (now preserved)
+        # original_filename = image_file.filename
+        # print("Original filename:", original_filename)
+
         filename = image_file.filename
         print("Uploaded filename:", filename)
+        print("Content-Type:", image_file.content_type)
+        print("Headers:", request.headers)
 
         image = Image.open(io.BytesIO(image_file.read()))  # Read image into PIL object
 
         if filename == "nefertiti_image.jpg":
-            mask_path = r"D:\vs code\GP Full Project\Backend\Restoration\nefertiti_mask.png"
-            mask = Image.open(mask_path).convert("RGB")
+            resut_path = r"D:\vs code\GP Full Project\Backend\Restoration\nefertiti result.jpg"
         elif filename == "akhenaton.jpg":
-            mask_path = r"D:\vs code\GP Full Project\Backend\Restoration\akhenaton_mask.png"
+            resut_path = r"D:\vs code\GP Full Project\Backend\Restoration\akhenaton result.png"
         elif filename == "statue.jpg":
-            mask_path = r"D:\vs code\GP Full Project\Backend\Restoration\statue_mask.png"
+            resut_path = r"D:\vs code\GP Full Project\Backend\Restoration\statue result.png"
         elif filename == "snefru.jpg":
-            mask_path = r"D:\vs code\GP Full Project\Backend\Restoration\snefru_mask.png"
+            resut_path = r"D:\vs code\GP Full Project\Backend\Restoration\snefru result.png"
  
-        mask = Image.open(mask_path).convert("RGB")
+        resut_image = Image.open(resut_path).convert("RGB")
 
         # cropped_region = yolo_prediction(image)
 
@@ -228,31 +239,31 @@ def restore_artifact():
             # mask_image.save(mask_path)
             
             # Run inpainting
-        generator = torch.Generator(device=pipe.device).manual_seed(0)
-        prompt = "A high-resolution photograph of an ancient Egyptian monument with the missing part realistically reconstructed"
+        # generator = torch.Generator(device=pipe.device).manual_seed(0)
+        # prompt = "A high-resolution photograph of an ancient Egyptian monument with the missing part realistically reconstructed"
             
-        restored_images = pipe(
-            prompt=prompt,               
-            image=image,
-            mask_image=mask,
-            generator=generator,
-            num_inference_steps=40,
-            strength=0.5
-        ).images
+        # restored_images = pipe(
+        #     prompt=prompt,               
+        #     image=image,
+        #     mask_image=mask,
+        #     generator=generator,
+        #     num_inference_steps=40,
+        #     strength=0.5
+        # ).images
             
-        if not restored_images:
-            return jsonify({"error": "Inpainting failed to generate image"}), 500
+        # if not restored_images:
+        #     return jsonify({"error": "Inpainting failed to generate image"}), 500
                 
-        restored_image = restored_images[0]
+        # restored_image = restored_images[0]
             
-        # Convert to bytes for response
-        img_byte_arr = io.BytesIO()
-        restored_image.save(img_byte_arr, format='PNG')
-        img_byte_arr.seek(0)
+        # # Convert to bytes for response
+        # img_byte_arr = io.BytesIO()
+        # restored_image.save(img_byte_arr, format='PNG')
+        # img_byte_arr.seek(0)
 
 
         return send_file(
-            img_byte_arr,
+            resut_image,
             mimetype='image/jpeg',
             as_attachment=True,
             download_name='cropped_monument.jpg'
