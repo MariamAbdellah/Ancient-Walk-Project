@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import './index.css';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { Link } from 'react-router-dom';
-
 
 const languages = [
   { code: "en", name: "English" },
@@ -68,6 +67,7 @@ const ArtifactUpload = () => {
   });
   const [selectedFile, setSelectedFile] = useState(null);
   const [restoredImage, setRestoredImage] = useState(null);
+  const [fileName, setFileName] = useState("");
 
   const previewImage = (event) => {
     const file = event.target.files[0];
@@ -77,15 +77,16 @@ const ArtifactUpload = () => {
         setImageSrc(e.target.result);
       };
       reader.readAsDataURL(file);
-      setSelectedFile(file); // Set for useEffect and fetch
+      setSelectedFile(file);
+      setFileName(file.name);
     }
   };
 
-  useEffect(() => {
+  const handleRestoration = () => {
     if (selectedFile) {
       fetchArtifactData(selectedFile, selectedLanguage);
     }
-  }, [selectedLanguage, selectedFile]);
+  };
 
   const fetchArtifactData = async (file, language) => {
     const formData = new FormData();
@@ -127,15 +128,7 @@ const ArtifactUpload = () => {
           <div className="row d-flex justify-content-center align-items-center order-3 order-md-3 mob">
             <nav className="navbar navbar-expand-lg navbar-light fw-bold">
               <div className="container">
-                <button
-                  className="navbar-toggler"
-                  type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#navbarNav"
-                  aria-controls="navbarNav"
-                  aria-expanded="false"
-                  aria-label="Toggle navigation"
-                >
+                <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                   <span className="navbar-toggler-icon"></span>
                 </button>
                 <div className="collapse navbar-collapse" id="navbarNav">
@@ -149,30 +142,26 @@ const ArtifactUpload = () => {
                     <li className="nav-item">
                       <Link className="nav-link text-uppercase text-white font" to="/project">Project</Link>
                     </li>
-                     {currentUser ? (
-                          <li className="nav-item">
-                              <span className="nav-link text-uppercase text-white font">
-                              <i class="bi bi-person-circle"></i> {currentUser.email.split('@')[0]} 
-                              </span>
-                          </li>
-                         ) : (
-                          <>
-                              <li className="nav-item">
-                                  <button
-                                      className="nav-link fw-bold mx-1 text-uppercase text-white btn hover"
-                                      data-bs-toggle="modal"
-                                      data-bs-target="#loginModal"
-                                  >
-                                      Login
-                                  </button>
-                              </li>
-                              <li className="nav-item">
-                                  <button className="nav-link btn btn-dark mx-1 hove">
-                                      <Link className='text-white font text-uppercase fw-bold text-decoration-none' to="/register">Register</Link> 
-                                  </button>
-                              </li>
-                          </>
-                      )}
+                    {currentUser ? (
+                      <li className="nav-item">
+                        <span className="nav-link text-uppercase text-white font">
+                          <i className="bi bi-person-circle"></i> {currentUser.email.split('@')[0]}
+                        </span>
+                      </li>
+                    ) : (
+                      <>
+                        <li className="nav-item">
+                          <button className="nav-link fw-bold mx-1 text-uppercase text-white btn hover" data-bs-toggle="modal" data-bs-target="#loginModal">
+                            Login
+                          </button>
+                        </li>
+                        <li className="nav-item">
+                          <button className="nav-link btn btn-dark mx-1 hove">
+                            <Link className='text-white font text-uppercase fw-bold text-decoration-none' to="/register">Register</Link>
+                          </button>
+                        </li>
+                      </>
+                    )}
                   </ul>
                 </div>
               </div>
@@ -234,7 +223,8 @@ const ArtifactUpload = () => {
 
           <button
             className="glass-btn col-6 col-md-3 col-lg-4"
-            disabled={!restoredImage}
+            disabled={!selectedFile}
+            onClick={handleRestoration}
           >
             View Restored Artifact
           </button>
@@ -249,6 +239,7 @@ const ArtifactUpload = () => {
             <div className="image-container">
               <img id="uploadedImage" src={imageSrc} alt="Artifact" className="uploaded-image" />
             </div>
+            <p className="text-white mt-2"><strong>File Name:</strong> {fileName}</p>
           </div>
         )}
 
@@ -283,6 +274,3 @@ const ArtifactUpload = () => {
 };
 
 export default ArtifactUpload;
-
-// before added draw image for user because of rasmy model 
-//note just change in project page
