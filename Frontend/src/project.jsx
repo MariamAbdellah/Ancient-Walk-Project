@@ -97,7 +97,7 @@ const ArtifactUpload = () => {
     formData.append("image", file);
   
     try {
-      const response = await fetch("https://your-restore-link", {
+      const response = await fetch("http://localhost:5003/restore", {
         method: "POST",
         body: formData,
       });

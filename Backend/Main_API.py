@@ -146,7 +146,7 @@ def analyze_artifact():
         #     timeout=TIMEOUT
         # )
 
-        restored_image = res_api(image_file)
+        # restored_image = res_api(image_file)
 
 
         response = {

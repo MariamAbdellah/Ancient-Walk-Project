@@ -29,8 +29,8 @@ from huggingface_hub import hf_hub_download
 app = Flask(__name__)
 CORS(app, resources={
     r"/*": {
-        "origins": ["http://localhost:5000"],  # Allow only Main API
-        "methods": ["POST"],
+        "origins": ["http://localhost:3000"],  # Allow only Main API
+        "methods": ["POST", "OPTIONS"],
         "allow_headers": ["Content-Type"]
     }
 })
@@ -208,7 +208,7 @@ def restore_artifact():
         elif filename == "snefru.jpg":
             resut_path = r"D:\vs code\GP Full Project\Backend\Restoration\snefru result.png"
  
-        resut_image = Image.open(resut_path).convert("RGB")
+        result_image = Image.open(resut_path).convert("RGB")
 
         # cropped_region = yolo_prediction(image)
 
@@ -256,18 +256,15 @@ def restore_artifact():
                 
         # restored_image = restored_images[0]
             
-        # # Convert to bytes for response
-        # img_byte_arr = io.BytesIO()
-        # restored_image.save(img_byte_arr, format='PNG')
-        # img_byte_arr.seek(0)
+        # Convert to base64 for JSON response
+        buffered = io.BytesIO()
+        result_image.save(buffered, format="JPEG")
+        img_str = base64.b64encode(buffered.getvalue()).decode('utf-8')
 
-
-        return send_file(
-            resut_image,
-            mimetype='image/jpeg',
-            as_attachment=True,
-            download_name='cropped_monument.jpg'
-        )
+        return jsonify({
+            "restored_image": f"data:image/jpeg;base64,{img_str}",
+            "filename": f"restored_{filename}"
+        })
     
         # finally:
         #     # Clean up temp directory
