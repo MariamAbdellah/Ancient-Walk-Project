@@ -82,11 +82,43 @@ const ArtifactUpload = () => {
     }
   };
 
-  const handleRestoration = () => {
+  const handleRestoration = async () => {
     if (selectedFile) {
-      fetchArtifactData(selectedFile, selectedLanguage);
+      // Call the original artifact info API
+      await fetchArtifactData(selectedFile, selectedLanguage);
+  
+      // Call the new restoration image API
+      await fetchRestoredImage(selectedFile);
     }
   };
+  
+  const fetchRestoredImage = async (file) => {
+    const formData = new FormData();
+    formData.append("image", file);
+  
+    try {
+      const response = await fetch("https://your-restore-link", {
+        method: "POST",
+        body: formData,
+      });
+  
+      if (!response.ok) throw new Error("Failed to fetch restored image");
+  
+      const data = await response.json();
+      console.log("Restoration API Response:", data);
+  
+      if (data.restored_image) {
+        setRestoredImage(data.restored_image);
+      } else {
+        setRestoredImage(null);
+      }
+  
+    } catch (error) {
+      console.error("Error fetching restored image:", error);
+      setRestoredImage(null);
+    }
+  };
+  
 
   const fetchArtifactData = async (file, language) => {
     const formData = new FormData();
@@ -110,10 +142,6 @@ const ArtifactUpload = () => {
         timePeriod: data.artifact_info?.time_period || "Not available",
         restorationStatus: data.damage_status || "Not available",
       });
-
-      if (data.restored_image) {
-        setRestoredImage(data.restored_image); 
-      }
 
     } catch (error) {
       console.error("Error fetching data:", error);
