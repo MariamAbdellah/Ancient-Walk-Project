@@ -24,7 +24,18 @@ import shutil
 from huggingface_hub import hf_hub_download
 
 
+################## when calling fast api
+# import requests
 
+# url = "http://your-server-address/inpaint"
+# files = {
+#     "image": open("nefertiti_image.jpg", "rb"),
+#     "mask": open("nefertiti_mask.png", "rb")
+# }
+
+# response = requests.post(url, files=files)
+# with open("result.png", "wb") as f:
+#     f.write(response.content)
 
 app = Flask(__name__)
 CORS(app, resources={
