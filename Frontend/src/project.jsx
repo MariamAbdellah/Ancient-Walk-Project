@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import './index.css';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { Link } from 'react-router-dom';
-
 
 const languages = [
   { code: "en", name: "English" },
@@ -21,14 +20,6 @@ const languages = [
   { code: "pt", name: "Português" },
 ];
 
-// const currentUser = {
-//   id: '123',
-//   name: 'Nada',
-//   email: 'Nada@example.com',
-//   token: 'abc123xyz'
-// };
-
-// Language Selector Component
 const LanguageSelector = ({ onLanguageChange }) => {
   const [language, setLanguage] = useState("en");
 
@@ -69,8 +60,28 @@ const ArtifactUpload = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [restoredImage, setRestoredImage] = useState(null);
   const [fileName, setFileName] = useState("");
+  const [isDrawing, setIsDrawing] = useState(false);
+  const canvasRef = useRef(null);
+  const [lastX, setLastX] = useState(0);
+  const [lastY, setLastY] = useState(0);
 
-  // When photo is uploaded or captured
+  // Initialize canvas when image is uploaded
+  useEffect(() => {
+    if (imageSrc && canvasRef.current) {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+      
+      const img = new Image();
+      img.onload = () => {
+        // Set canvas dimensions to match image
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+      };
+      img.src = imageSrc;
+    }
+  }, [imageSrc]);
+
   const handleImageUpload = async (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -81,83 +92,116 @@ const ArtifactUpload = () => {
       reader.readAsDataURL(file);
       setSelectedFile(file);
       setFileName(file.name);
-  
-      // Reset restored image when a new one is uploaded
       setRestoredImage(null);
-  
-      // Fetch artifact info immediately after upload
-      await fetchArtifactData(file, selectedLanguage);
     }
   };
-  
 
-  //  Only called when "Restore" button is pressed
+  const clearDrawing = () => {
+    if (!imageSrc || !canvasRef.current) return;
+    
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    img.onload = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0);
+    };
+    img.src = imageSrc;
+  };
+
+  // Drawing functions
+  const startDrawing = (e) => {
+    if (!imageSrc) return;
+    setIsDrawing(true);
+    
+    const canvas = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    
+    const x = (e.clientX - rect.left) * scaleX;
+    const y = (e.clientY - rect.top) * scaleY;
+    
+    setLastX(x);
+    setLastY(y);
+  };
+
+  const draw = (e) => {
+    if (!isDrawing || !imageSrc) return;
+    
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    
+    const x = (e.clientX - rect.left) * scaleX;
+    const y = (e.clientY - rect.top) * scaleY;
+    
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(x, y);
+    ctx.strokeStyle = 'white';
+    ctx.lineWidth = 20;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+    
+    setLastX(x);
+    setLastY(y);
+  };
+
+  const stopDrawing = () => {
+    setIsDrawing(false);
+  };
+
   const handleRestoration = async () => {
-    if (selectedFile) {
-      await fetchRestoredImage(selectedFile);
-    }
-  };
+    if (!canvasRef.current) return;
+    
+    // Get the drawn image as blob
+    canvasRef.current.toBlob(async (blob) => {
+      const formData = new FormData();
+      formData.append("image", blob, fileName || "artifact.png");
+      formData.append("language", selectedLanguage);
 
-  const fetchRestoredImage = async (file) => {
-    const formData = new FormData();
-    formData.append("image", file);
+      try {
+        // First send to analysis endpoint
+        const analysisResponse = await fetch("http://localhost:5000/analyze", {
+          method: "POST",
+          body: formData,
+        });
+        
+        if (!analysisResponse.ok) throw new Error("Analysis failed");
+        const analysisData = await analysisResponse.json();
+        
+        setArtifactData({
+          description: analysisData.artifact_info?.description || "Not available",
+          material: analysisData.artifact_info?.material || "Not available",
+          timePeriod: analysisData.artifact_info?.time_period || "Not available",
+          restorationStatus: analysisData.damage_status || "Not available",
+        });
 
-    try {
-      const response = await fetch("http://localhost:5003/restore", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) throw new Error("Failed to fetch restored image");
-
-      const data = await response.json();
-      console.log("Restoration API Response:", data);
-
-      if (data.restored_image) {
-        setRestoredImage(data.restored_image);
-      } else {
-        setRestoredImage(null);
+        // Then send to restoration endpoint
+        const restorationResponse = await fetch("http://localhost:5003/restore", {
+          method: "POST",
+          body: formData,
+        });
+        
+        if (!restorationResponse.ok) throw new Error("Restoration failed");
+        const restorationData = await restorationResponse.json();
+        
+        if (restorationData.restored_image) {
+          setRestoredImage(restorationData.restored_image);
+        }
+      } catch (error) {
+        console.error("Error:", error);
       }
-
-    } catch (error) {
-      console.error("Error fetching restored image:", error);
-      setRestoredImage(null);
-    }
-  };
-
-  const fetchArtifactData = async (file, language) => {
-    const formData = new FormData();
-    formData.append("image", file);
-    formData.append("language", language);
-
-    try {
-      const response = await fetch("http://localhost:5000/analyze", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) throw new Error("Failed to fetch artifact data");
-
-      const data = await response.json();
-      console.log("API Response: ", data)
-
-      setArtifactData({
-        description: data.artifact_info?.description || "Not available",
-        material: data.artifact_info?.material || "Not available",
-        timePeriod: data.artifact_info?.time_period || "Not available",
-        restorationStatus: data.damage_status || "Not available",
-      });
-
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
+    }, 'image/png');
   };
 
   return (
     <div className='project-background'>
       <header>
-         {/* Navbar */}
-         <div className="container-fluid d-flex justify-content-between align-items-center mb-5 mob">
+        <div className="container-fluid d-flex justify-content-between align-items-center mb-5 mob">
           <div className="row d-flex justify-content-center align-items-center order-3 order-md-3 mob">
             <nav className="navbar navbar-expand-lg navbar-light fw-bold">
               <div className="container">
@@ -175,26 +219,16 @@ const ArtifactUpload = () => {
                     <li className="nav-item">
                       <Link className="nav-link text-uppercase text-white font" to="/project">Project</Link>
                     </li>
-                    {/* {currentUser ? (
-                      <li className="nav-item">
-                        <span className="nav-link text-uppercase text-white font">
-                          <i className="bi bi-person-circle"></i> {currentUser.email.split('@')[0]}
-                        </span>
-                      </li>
-                    ) : ( */}
-                      <>
-                        <li className="nav-item">
-                          <button className="nav-link fw-bold mx-1 text-uppercase text-white btn hover" data-bs-toggle="modal" data-bs-target="#loginModal">
-                            Login
-                          </button>
-                        </li>
-                        <li className="nav-item">
-                          <button className="nav-link btn btn-dark mx-1 hove">
-                            <Link className='text-white font text-uppercase fw-bold text-decoration-none' to="/register">Register</Link>
-                          </button>
-                        </li>
-                      </>
-                  
+                    <li className="nav-item">
+                      <button className="nav-link fw-bold mx-1 text-uppercase text-white btn hover" data-bs-toggle="modal" data-bs-target="#loginModal">
+                        Login
+                      </button>
+                    </li>
+                    <li className="nav-item">
+                      <button className="nav-link btn btn-dark mx-1 hove">
+                        <Link className='text-white font text-uppercase fw-bold text-decoration-none' to="/register">Register</Link>
+                      </button>
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -202,13 +236,12 @@ const ArtifactUpload = () => {
           </div>
           <div className="d-flex justify-content-center align-items-center text-center order-1 order-md-1">
             <Link className="navbar-brand font text-white" to="/">
-             <img src="/img/logo.png" alt="logo" className="me-2" style={{ height: "40px" }}/>
+              <img src="/img/logo.png" alt="logo" className="me-2" style={{ height: "40px" }}/>
               <em className='fs-5'><span className='text-info'>A</span>ncient Wa<i className="bi bi-person-walking fs-5 text-info"></i>k</em>
             </Link>
           </div>
         </div>
 
-        {/* Login Modal */}
         <div className="modal fade" id="loginModal" tabIndex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
           <div className="modal-dialog">
             <div className="modal-content">
@@ -241,7 +274,6 @@ const ArtifactUpload = () => {
         </div>
       </header>
 
-      {/* Upload Section */}
       <section className="d-flex flex-column align-items-center py-5">
         <h2 className="text-center mb-4 fw-bold text-white text-uppercase ancint">Discover Your Artifact</h2>
         <div className="d-flex justify-content-center gap-4 mb-4 row">
@@ -266,18 +298,68 @@ const ArtifactUpload = () => {
           <LanguageSelector onLanguageChange={setSelectedLanguage} />
         </div>
 
-        {/* Uploaded Preview */}
         {imageSrc && (
           <div className="ArtifactUpload">
-            <h5 className="fw-semibold text-white">Uploaded Photo:</h5>
-            <div className="image-container">
-              <img id="uploadedImage" src={imageSrc} alt="Artifact" className="uploaded-image" />
+            <h5 className="fw-semibold text-white ms-4">Draw on the artifact (use white lines):</h5>
+            <div 
+              className="image-container position-relative"
+              style={{cursor: 'crosshair'}}
+            >
+              <canvas
+                ref={canvasRef}
+                onMouseDown={startDrawing}
+                onMouseMove={draw}
+                onMouseUp={stopDrawing}
+                onMouseLeave={stopDrawing}
+                onTouchStart={(e) => {
+                  const touch = e.touches[0];
+                  const mouseEvent = new MouseEvent("mousedown", {
+                    clientX: touch.clientX,
+                    clientY: touch.clientY
+                  });
+                  startDrawing(mouseEvent);
+                }}
+                onTouchMove={(e) => {
+                  const touch = e.touches[0];
+                  const mouseEvent = new MouseEvent("mousemove", {
+                    clientX: touch.clientX,
+                    clientY: touch.clientY
+                  });
+                  draw(mouseEvent);
+                }}
+                onTouchEnd={stopDrawing}
+                className="uploaded-image"
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  zIndex: 2
+                }}
+              />
+
+              <img
+                src={imageSrc}
+                alt={fileName || "Artifact"}
+                className="uploaded-image"
+                style={{
+                  position: 'relative',
+                  zIndex: 1,
+                  pointerEvents: 'none'
+                }}
+              />
             </div>
-            <p className="text-white mt-2"><strong>File Name:</strong> {fileName}</p>
+            <div className="d-flex justify-content-center mt-2 ms-5">
+              <button 
+                className="glass-btn"
+                onClick={clearDrawing}
+              >
+                Clear Drawing
+              </button>
+            </div>
+            <p className="text-white mt-2 text-center"><strong>File Name:</strong> {fileName}</p>
           </div>
         )}
 
-        {/* Restored Image */}
         {restoredImage && (
           <div className="ArtifactUpload mt-4">
             <h5 className="fw-semibold text-white">Restored Image:</h5>
@@ -287,7 +369,6 @@ const ArtifactUpload = () => {
           </div>
         )}
 
-        {/* Artifact Details */}
         <div className="glass-card text-white p-4 mt-4">
           <h4 className="text-center mb-3">Artifact Details</h4>
           <table className="table table-borderless text-white glass table">

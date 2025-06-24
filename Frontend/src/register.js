@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link} from 'react-router-dom';
  import './App.css';
  import './index.css';
 
@@ -9,7 +9,7 @@ export default function Register() {
     const [currentUser, setCurrentUser] = useState(null);
     const [registerData, setRegisterData] = useState({ email: '', password: '', role: 'user' });
     const [loginData, setLoginData] = useState({ email: '', password: '' });
-    const navigate = useNavigate();
+    //const navigate = useNavigate();
 
     useEffect(() => {
         const storedUser = sessionStorage.getItem('currentUser');

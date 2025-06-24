@@ -1,5 +1,4 @@
 import React from 'react';
-import styles from './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Link } from 'react-router-dom';
 import './App.css';
