@@ -6,12 +6,12 @@ import './App.css';
 import './index.css';
 
 export default function About() {
-  const currentUser = {
-    id: '123',
-    name: 'Nada',
-    email: 'Nada@example.com',
-    token: 'abc123xyz'
-  };
+  // const currentUser = {
+  //   id: '123',
+  //   name: 'Nada',
+  //   email: 'Nada@example.com',
+  //   token: 'abc123xyz'
+  // };
     return (
         <>
         <div className='bg'>
@@ -43,13 +43,13 @@ export default function About() {
                     <li className="nav-item">
                       <Link className="nav-link text-uppercase text-white font" to="/project">Project</Link>
                     </li>
-                        {currentUser ? (
+                        {/* {currentUser ? (
                     <li className="nav-item">
                         <span className="nav-link text-uppercase text-white font">
                         <i class="bi bi-person-circle"></i> {currentUser.email.split('@')[0]} 
                         </span>
                     </li>
-                    ) : (
+                    ) : ( */}
                     <>
                         <li className="nav-item">
                             <button
@@ -66,7 +66,7 @@ export default function About() {
                             </button>
                         </li>
                     </>
-                )}
+              
                           </ul>
                         </div>
                       </div>

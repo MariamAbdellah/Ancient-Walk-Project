@@ -21,12 +21,12 @@ const languages = [
   { code: "pt", name: "Português" },
 ];
 
-const currentUser = {
-  id: '123',
-  name: 'Nada',
-  email: 'Nada@example.com',
-  token: 'abc123xyz'
-};
+// const currentUser = {
+//   id: '123',
+//   name: 'Nada',
+//   email: 'Nada@example.com',
+//   token: 'abc123xyz'
+// };
 
 // Language Selector Component
 const LanguageSelector = ({ onLanguageChange }) => {
@@ -175,13 +175,13 @@ const ArtifactUpload = () => {
                     <li className="nav-item">
                       <Link className="nav-link text-uppercase text-white font" to="/project">Project</Link>
                     </li>
-                    {currentUser ? (
+                    {/* {currentUser ? (
                       <li className="nav-item">
                         <span className="nav-link text-uppercase text-white font">
                           <i className="bi bi-person-circle"></i> {currentUser.email.split('@')[0]}
                         </span>
                       </li>
-                    ) : (
+                    ) : ( */}
                       <>
                         <li className="nav-item">
                           <button className="nav-link fw-bold mx-1 text-uppercase text-white btn hover" data-bs-toggle="modal" data-bs-target="#loginModal">
@@ -194,7 +194,7 @@ const ArtifactUpload = () => {
                           </button>
                         </li>
                       </>
-                    )}
+                  
                   </ul>
                 </div>
               </div>
@@ -243,7 +243,7 @@ const ArtifactUpload = () => {
 
       {/* Upload Section */}
       <section className="d-flex flex-column align-items-center py-5">
-        <h2 className="text-center mb-4 fw-bold text-white text-uppercase ancint">Discover Your Artifact.</h2>
+        <h2 className="text-center mb-4 fw-bold text-white text-uppercase ancint">Discover Your Artifact</h2>
         <div className="d-flex justify-content-center gap-4 mb-4 row">
           <label className="glass-btn col-4 col-md-3 col-lg-2">
             Upload Photo
