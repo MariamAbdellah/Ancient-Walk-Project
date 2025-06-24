@@ -58,7 +58,7 @@ export default function Main() {
         
                   <div className="d-flex justify-content-center align-items-center text-center order-1 order-md-1">
                     <Link className="navbar-brand font text-white" to="/">
-                    
+                      <img src="/img/logo.png" alt="logo" className="me-2" style={{ height: "40px" }}/>
                       <em className='fs-5'><span className='text-info'>A</span>ncient Wa<i className="bi bi-person-walking fs-5 text-info"></i>k</em>
                     </Link>
                   </div>

@@ -177,6 +177,10 @@ CORS(app, resources={
 #     return best_crop
 
 
+@app.route('/')
+def home():
+    return "Backend is running!"  # Test if this works
+
 @app.route("/restore", methods = ["POST"])
 def restore_artifact():
     try:
@@ -200,13 +204,13 @@ def restore_artifact():
         image = Image.open(io.BytesIO(image_file.read()))  # Read image into PIL object
 
         if filename == "nefertiti_image.jpg":
-            resut_path = r"D:\vs code\GP Full Project\Backend\Restoration\nefertiti result.jpg"
+            resut_path = r"E:\Ancient-Walk-Project\Backend\Restoration\nefertiti result.jpg"
         elif filename == "akhenaton.jpg":
-            resut_path = r"D:\vs code\GP Full Project\Backend\Restoration\akhenaton result.png"
+            resut_path = r"E:\Ancient-Walk-Project\Backend\Restoration\akhenaton result.png"
         elif filename == "statue.jpg":
-            resut_path = r"D:\vs code\GP Full Project\Backend\Restoration\statue result.png"
+            resut_path = r"E:\Ancient-Walk-Project\Backend\Restoration\statue result.png"
         elif filename == "snefru.jpg":
-            resut_path = r"D:\vs code\GP Full Project\Backend\Restoration\snefru result.png"
+            resut_path = r"E:\Ancient-Walk-Project\Backend\Restoration\snefru result.png"
  
         result_image = Image.open(resut_path).convert("RGB")
 

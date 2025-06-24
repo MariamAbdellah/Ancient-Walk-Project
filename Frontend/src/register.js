@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Link, useNavigate } from 'react-router-dom';
-import './App.css';
-import './index.css';
+ import './App.css';
+ import './index.css';
 
 export default function Register() {
     const [users, setUsers] = useState([]); // Only dynamic users stored
@@ -125,15 +125,6 @@ export default function Register() {
                                         ) : (
                                             <>
                                                 <li className="nav-item">
-                                                    <button
-                                                        className="nav-link fw-bold mx-1 text-uppercase text-white btn hover"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#loginModal"
-                                                    >
-                                                        Login
-                                                    </button>
-                                                </li>
-                                                <li className="nav-item">
                                                     <button className="nav-link btn btn-dark mx-1 hove">
                                                         <Link className='text-white font text-uppercase fw-bold text-decoration-none' to="/register">Register</Link> 
                                                     </button>
@@ -148,6 +139,7 @@ export default function Register() {
 
                     <div className="d-flex justify-content-center align-items-center text-center order-1 order-md-1">
                         <Link className="navbar-brand font text-white" to="/">
+                         <img src="/img/logo.png" alt="logo" className="me-2" style={{ height: "40px" }}/>
                             <em className='fs-5'><span className='text-info'>A</span>ncient Wa<i className="bi bi-person-walking fs-5 text-info"></i>k</em>
                         </Link>
                     </div>

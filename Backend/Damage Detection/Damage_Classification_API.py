@@ -15,11 +15,17 @@ CORS(app, resources={
 })
 
 # Load your trained model
-model_path = r"D:\vs code\GP Back\Damage Detection\damage_classification_model.keras"
+model_path = r"E:\Ancient-Walk-Project\Backend\Damage Detection\damage_classification_model.keras"
 model = tf.keras.models.load_model(model_path)
 
 # Define label mapping
 class_labels = {0: "No Restoration Needed", 1: "Needs To Be Restored"}
+
+
+@app.route('/')
+def home():
+    return "Backend is running!"  # Test if this works
+
 
 @app.route("/predict", methods=["POST"])
 def predict():

@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { Link } from 'react-router-dom';
 
+
 const languages = [
   { code: "en", name: "English" },
   { code: "ar", name: "العربية" },
@@ -80,11 +81,15 @@ const ArtifactUpload = () => {
       reader.readAsDataURL(file);
       setSelectedFile(file);
       setFileName(file.name);
-
+  
+      // Reset restored image when a new one is uploaded
+      setRestoredImage(null);
+  
       // Fetch artifact info immediately after upload
       await fetchArtifactData(file, selectedLanguage);
     }
   };
+  
 
   //  Only called when "Restore" button is pressed
   const handleRestoration = async () => {
@@ -197,6 +202,7 @@ const ArtifactUpload = () => {
           </div>
           <div className="d-flex justify-content-center align-items-center text-center order-1 order-md-1">
             <Link className="navbar-brand font text-white" to="/">
+             <img src="/img/logo.png" alt="logo" className="me-2" style={{ height: "40px" }}/>
               <em className='fs-5'><span className='text-info'>A</span>ncient Wa<i className="bi bi-person-walking fs-5 text-info"></i>k</em>
             </Link>
           </div>

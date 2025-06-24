@@ -18,9 +18,9 @@ import googletrans
 from googletrans import Translator
 import asyncio
 
-train_csv = r"D:\vs code\retrieval\train_monument.csv"
+train_csv = r"E:\Ancient-Walk-Project\Backend\Information Retrieval\train_monument.csv"
 database_metadata = pd.read_csv(train_csv)
-image_base_dir = r"D:\vs code\retrieval\train images"
+image_base_dir = r"C:\GP_WORK\GP_Dataset\train images"
 
 class_mapping = {'Akhenaten': 0, 'Bent-pyramid-for-senefru': 1, 'Colossal-Statue-of-Ramesses-II': 2,
                  'Colossoi-of-Memnon': 3, 'Goddess-Isis-with-her-child': 4, 'Hatshepsut': 5, 'Hatshepsut-face': 6,
@@ -44,7 +44,7 @@ def setup_cvnet():
     Sgem = sgem()
 
     # Load pre-trained weights
-    weights_path = r"D:\vs code\retrieval\Copy of CVPR2022_CVNet_R101.pyth"
+    weights_path = r"E:\Ancient-Walk-Project\Backend\Information Retrieval\Copy of CVPR2022_CVNet_R101.pyth"
     checkpoint = torch.load(weights_path, map_location = 'cuda' if torch.cuda.is_available() else 'cpu')
     model_state = model.state_dict()
     pretrained_state = checkpoint['model_state']
@@ -71,6 +71,9 @@ CORS(app, resources={
 # def get_image(filename):
 #     return send_from_directory(image_base_dir, filename)
 
+@app.route('/')
+def home():
+    return "Backend is running!"  # Test if this works
 
 @app.route("/retrieve", methods = ["POST"])
 def retrieve_artifact():
@@ -132,8 +135,10 @@ def preprocess(image):
 
     # query_image = Image.open(image_path).convert("RGB")
 
-    stats_path = r"D:\vs code\retrieval\stats.pth"
-    stats = torch.load(stats_path)
+    stats_path = r"E:\Ancient-Walk-Project\Backend\Information Retrieval\stats.pth"
+    
+    stats = torch.load(stats_path, map_location=torch.device('cpu'))
+
     mean = stats['mean']
     std = stats['std']
 
@@ -189,7 +194,7 @@ def load_saved_features(data_path):
 
 
 def retrieve_artifact_info(image, df, device, k=10, threshold=0.55):
-    data_path = r"D:\vs code\retrieval\features_and_labels.pth"
+    data_path = r"E:\Ancient-Walk-Project\Backend\Information Retrieval\features_and_labels.pth"
     database_features, database_labels = load_saved_features(data_path)
 
     # model.eval()

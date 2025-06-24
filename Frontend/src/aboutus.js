@@ -1,5 +1,5 @@
 import React from 'react';
-import './index.css';
+import styles from './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Link } from 'react-router-dom';
 import './App.css';
@@ -15,7 +15,7 @@ export default function About() {
     return (
         <>
         <div className='bg'>
-       <header >
+       <header  >
         {/* First Header */}
         <div className="container-fluid d-flex justify-content-between align-items-center mb-5 mob">
           <div className="row d-flex justify-content-center align-items-center order-3 order-md-3 mob">
@@ -75,6 +75,7 @@ export default function About() {
 
           <div className="d-flex justify-content-center align-items-center text-center order-1 order-md-1">
             <Link className="navbar-brand font text-white" to="/">
+             <img src="/img/logo.png" alt="logo" className="me-2" style={{ height: "40px" }}/>
             <em className='fs-5'><span className='text-info'>A</span>ncient Wa<i className="bi bi-person-walking fs-5 text-info"></i>k</em>
             </Link>
           </div>

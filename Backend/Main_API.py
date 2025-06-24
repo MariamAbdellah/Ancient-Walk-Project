@@ -26,6 +26,11 @@ RESTORATION_API_URL = "http://localhost:5003/restore"
 TIMEOUT = 10  # seconds
 
 translator = Translator()
+# translator = Translator(service_urls=['translate.google.com'])
+
+@app.route('/')
+def home():
+    return "Backend is running!"  # Test if this works
 
 def validate_image(file):
     """Ensure the uploaded file is a valid image"""
@@ -100,14 +105,14 @@ def res_api(image_file):
 
     # Define a mapping of known filenames to result paths
     result_mapping = {
-        "nefertiti_image.jpg": r"D:\vs code\GP Full Project\Backend\Restoration\nefertiti result.jpg",
-        "akhenaton.jpg": r"D:\vs code\GP Full Project\Backend\Restoration\akhenaton result.png",
-        "statue.jpg": r"D:\vs code\GP Full Project\Backend\Restoration\statue result.png",
-        "snefru.jpg": r"D:\vs code\GP Full Project\Backend\Restoration\snefru result.png"
+        "nefertiti_image.jpg": r"E:\Ancient-Walk-Project\Backend\Restoration\nefertiti result.jpg",
+        "akhenaton.jpg": r"E:\Ancient-Walk-Project\Backend\Restoration\akhenaton result.png",
+        "statue.jpg": r"E:\Ancient-Walk-Project\Backend\Restoration\statue result.png",
+        "snefru.jpg": r"E:\Ancient-Walk-Project\Backend\Restoration\snefru result.png"
     }
 
     # Use a default image if no match found
-    resut_path = result_mapping.get(filename, r"D:\vs code\GP Full Project\Backend\Restoration\default_result.jpg")
+    resut_path = result_mapping.get(filename, r"E:\Ancient-Walk-Project\Backend\Restoration\default_result.jpg")
         
     resut_image = Image.open(resut_path).convert("RGB")
 
@@ -148,20 +153,33 @@ def analyze_artifact():
 
         # restored_image = res_api(image_file)
 
+        # response = {
+        #     "damage_status":  translate_text(damage_result.get("label", "Unknown Status"), "en", language),  # Get the label directly
+        #     # "damage_confidence": damage_result.get("confidence", 0),
+        #     "artifact_info": {
+        #         "description":  translate_text(retrieval_result.get("Description"), "en", language),
+        #         "material": translate_text(retrieval_result.get("Material"), "en", language),
+        #         "time_period": translate_text(retrieval_result.get("Time Period"), "en", language),
+        #         # "restoration_status": retrieval_result.get("info", {}).get("Restoration Status")
+        #     },
+        #     "restored_"
+        #     "warnings": []
+        # }
+
+        damage_status = (translate_text(damage_result.get("label", "Unknown Status"), "en", language))
+        description = (translate_text(retrieval_result.get("Description"), "en", language))
+        material = (translate_text(retrieval_result.get("Material"), "en", language))
+        time_period = (translate_text(retrieval_result.get("Time Period"), "en", language))
 
         response = {
-            "damage_status": translate_text(damage_result.get("label", "Unknown Status"), "en", language),  # Get the label directly
-            # "damage_confidence": damage_result.get("confidence", 0),
+            "damage_status": damage_status,
             "artifact_info": {
-                "description": translate_text(retrieval_result.get("Description"), "en", language),
-                "material": translate_text(retrieval_result.get("Material"), "en", language),
-                "time_period": translate_text(retrieval_result.get("Time Period"), "en", language),
-                # "restoration_status": retrieval_result.get("info", {}).get("Restoration Status")
+                "description": description,
+                "material": material,
+                "time_period": time_period,
             },
-            "restored_"
             "warnings": []
         }
-
 
         # response = {
         #     "damage_status": damage_result.get("label", "Unknown Status"),  # Get the label directly
