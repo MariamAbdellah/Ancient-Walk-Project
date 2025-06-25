@@ -122,7 +122,8 @@ def res_api(image_file):
 def analyze_artifact():
     try:
         # 1. Get input
-        image_file = request.files["image"]
+        image_file = request.files["original_image"]
+        mask_file = request.files["mask_image"]
         language = request.form.get("language", "en")
         if not language:
             language = "en"

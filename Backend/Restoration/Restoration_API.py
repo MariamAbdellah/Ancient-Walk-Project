@@ -40,7 +40,7 @@ from huggingface_hub import hf_hub_download
 app = Flask(__name__)
 CORS(app, resources={
     r"/*": {
-        "origins": ["http://localhost:3000"],  # Allow only Main API
+        "origins": ["http://localhost:3000"],  
         "methods": ["POST", "OPTIONS"],
         "allow_headers": ["Content-Type"]
     }
@@ -197,11 +197,12 @@ def restore_artifact():
     try:
         print("Files received:", request.files)  # Check all files
 
-        if 'image' not in request.files:
+        if 'original_image' not in request.files:
             return jsonify({"error": "No image provided"}), 400
 
         # Get image from request
-        image_file = request.files["image"]
+        image_file = request.files["original_image"]
+        mask_file = request.files["mask_image"]
 
         # Get original filename (now preserved)
         # original_filename = image_file.filename
@@ -215,13 +216,13 @@ def restore_artifact():
         image = Image.open(io.BytesIO(image_file.read()))  # Read image into PIL object
 
         if filename == "nefertiti_image.jpg":
-            resut_path = r"E:\Ancient-Walk-Project\Backend\Restoration\nefertiti result.jpg"
+            resut_path = r"D:\vs code\GP Full Project\Backend\Restoration\nefertiti result.jpg"
         elif filename == "akhenaton.jpg":
-            resut_path = r"E:\Ancient-Walk-Project\Backend\Restoration\akhenaton result.png"
+            resut_path = r"D:\vs code\GP Full Project\Backend\Restoration\akhenaton result.png"
         elif filename == "statue.jpg":
-            resut_path = r"E:\Ancient-Walk-Project\Backend\Restoration\statue result.png"
+            resut_path = r"D:\vs code\GP Full Project\Backend\Restoration\statue result.png"
         elif filename == "snefru.jpg":
-            resut_path = r"E:\Ancient-Walk-Project\Backend\Restoration\snefru result.png"
+            resut_path = r"D:\vs code\GP Full Project\Backend\Restoration\snefru result.png"
  
         result_image = Image.open(resut_path).convert("RGB")
 

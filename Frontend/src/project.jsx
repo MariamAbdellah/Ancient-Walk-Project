@@ -155,12 +155,13 @@ const ArtifactUpload = () => {
   };
 
   const handleRestoration = async () => {
-    if (!canvasRef.current) return;
+    if (!canvasRef.current) return;/////////////////////////////////////////////////////
     
     // Get the drawn image as blob
     canvasRef.current.toBlob(async (blob) => {
       const formData = new FormData();
-      formData.append("image", blob, fileName || "artifact.png");
+      formData.append("original_image", selectedFile);         // The original uploaded image
+      formData.append("mask_image", blob, "mask.png"); //fileName ||
       formData.append("language", selectedLanguage);
 
       try {

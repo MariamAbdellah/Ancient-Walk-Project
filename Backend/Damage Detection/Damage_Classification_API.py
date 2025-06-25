@@ -15,7 +15,7 @@ CORS(app, resources={
 })
 
 # Load your trained model
-model_path = r"E:\Ancient-Walk-Project\Backend\Damage Detection\damage_classification_model.keras"
+model_path = r"D:\vs code\GP Full Project\Backend\Damage Detection\damage_classification_model.keras"
 model = tf.keras.models.load_model(model_path)
 
 # Define label mapping
