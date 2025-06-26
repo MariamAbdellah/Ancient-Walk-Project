@@ -3,14 +3,47 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Link } from 'react-router-dom';
 import './App.css';
 import './index.css';
+import { useState } from "react";
 
+
+ /*feedback function*/
 export default function About() {
-  // const currentUser = {
-  //   id: '123',
-  //   name: 'Nada',
-  //   email: 'Nada@example.com',
-  //   token: 'abc123xyz'
-  // };
+  const [feedbackData, setFeedbackData] = useState({ feedback: '' });
+
+  const handleInputChange = (e) => {
+    setFeedbackData({ ...feedbackData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  if (!feedbackData.feedback.trim()) {
+    alert("Please enter your feedback.");
+    return;
+  }
+
+  try {
+    const response = await fetch('your-api-endpoint/feedback', {    //API feedback
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(feedbackData),
+    });
+
+    if (response.ok) {
+      alert('Thanks for your feedback!');
+      setFeedbackData({ feedback: '' });
+    } else {
+      throw new Error('Failed to submit feedback');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Failed to submit feedback. Please try again.');
+  }
+};
+
+    
     return (
         <>
         <div className='bg'>
@@ -65,7 +98,6 @@ export default function About() {
                             </button>
                         </li>
                     </>
-              
                           </ul>
                         </div>
                       </div>
@@ -251,12 +283,12 @@ export default function About() {
     <br></br>
     <br></br>
               {/* CONTACTS Section (Improved) */}
-              <section className="contacts-section p-5 font pt-5 mt-5 bg-dark" id="Contact-info">
+              <section className="contacts-section p-5 font pt-5 mt-5 bg-dark justify-content-center align-items-center" id="Contact-info">
                 <div className="container font">
-                    <div className="row gy-4">
+                    <div className="row gy-4 justify-content-center align-items-center">
 
                         {/* Contact Info */}
-                        <div className="col-sm-12 col-lg-3 pe-5">
+                        <div className="col-sm-12 col-lg-3 pe-5 ">
                             <Link className="navbar-brand font text-white text-decoration-none" to="/home">
                                 <i className="bi bi-bootstrap-reboot pe-2 text-info"></i>
                                 <em>Egyptian Artifact <span className="text-info">R</span>estoration</em>
@@ -273,12 +305,27 @@ export default function About() {
                         </div>
 
                         {/* Newsletter Signup */}
-                        <div className="col-sm-12 col-lg-3 ps-5">
-                            <h5 className="fw-bold mb-3 font">Newsletter</h5>
-                            <p className="text-secondary font">Get the latest news, events & more delivered to your inbox.</p>
-                            <div className="newsletter-input font">
-                                <input type="email" placeholder="Your email address" className="form-control font" />
-                            </div>
+                        <div className="col-sm-12 col-lg-3 ps-5 pb-4">
+                            <h5 className="fw-bold mb-2 font">Newsletter</h5>
+                            <p className="text-secondary font">We send news to your registered email.</p>
+                        </div>
+                        
+                        {/*feedback */}
+                        <div className="col-sm-12 col-lg-3 ps-5 ms-5 ">
+                            <h5 className="fw-bold mb-3">Give us feedback</h5>
+                            <form onSubmit={handleSubmit}>
+                              <textarea 
+                                name="feedback"
+                                value={feedbackData.feedback}
+                                onChange={handleInputChange}
+                                placeholder="Your feedback..." 
+                                rows="4" 
+                                className="form-control mb-3"
+                              />
+                              <button type="submit" className=" glass-btn px-3 py-2">
+                                Send Feedback
+                              </button>
+                            </form>
                         </div>
 
                     </div>
@@ -287,6 +334,7 @@ export default function About() {
                     <div className="mt-5 text-center d-flex justify-content-center align-items-center font">
                         <p className="text-secondary mt-4 font">© 2025 Egyptian Artifact Restoration. All rights reserved.</p>
                     </div>
+
                 </div>
             </section>
             </div>
