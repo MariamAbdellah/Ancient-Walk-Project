@@ -21,7 +21,7 @@ export default function About() {
     alert("Please enter your feedback.");
     return;
   }
-
+//
   try {
     const response = await fetch('your-api-endpoint/feedback', {    //API feedback
       method: 'POST',
