@@ -8,7 +8,7 @@ from ultralytics import YOLO
 import cv2
 import numpy as np
 
-from diffusers import StableDiffusionXLInpaintPipeline, AutoencoderKL
+from diffusers import StableDiffusionInpaintPipeline, AutoencoderKL
 import torch
 
 import base64, os
@@ -51,6 +51,14 @@ CORS(app, resources={
 # sd_model_path = r"D:\vs code\GP Full Project\Backend\Restoration\GP_restoration_finetuned_SD_xl_base_1\pytorch_lora_weights.safetensors"
 # #"gp_sdxl/train_images"
 
+# Load the model
+device = "cuda" if torch.cuda.is_available() else "cpu"
+model_path = "Rasmy/GP_restoration_finetuned_SD"
+pipe = StableDiffusionInpaintPipeline.from_pretrained(
+    model_path,
+    torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32
+).to(device)
+
 # pipe = StableDiffusionXLInpaintPipeline.from_pretrained(
 #     sd_model_path,
 #     torch_dtype=torch.float16,
@@ -60,7 +68,7 @@ CORS(app, resources={
 
 # yolo_model_path = r"D:\vs code\GP Full Project\Backend\Restoration\best_yolov8_model.pt"
 # yolo_model = YOLO(yolo_model_path)
-# save_path = r"D:\vs code\GP Full Project\Backend\Restoration"
+save_path = r"D:\vs code\GP Full Project\Backend\Restoration"
 
 
 # # Initialize models
@@ -213,16 +221,27 @@ def restore_artifact():
         print("Content-Type:", image_file.content_type)
         print("Headers:", request.headers)
 
-        image = Image.open(io.BytesIO(image_file.read()))  # Read image into PIL object
+        # image = Image.open(io.BytesIO(image_file.read()))  # Read image into PIL object
 
-        if filename == "nefertiti_image.jpg":
-            resut_path = r"D:\vs code\GP Full Project\Backend\Restoration\nefertiti result.jpg"
-        elif filename == "akhenaton.jpg":
-            resut_path = r"D:\vs code\GP Full Project\Backend\Restoration\akhenaton result.png"
-        elif filename == "statue.jpg":
-            resut_path = r"D:\vs code\GP Full Project\Backend\Restoration\statue result.png"
-        elif filename == "snefru.jpg":
-            resut_path = r"D:\vs code\GP Full Project\Backend\Restoration\snefru result.png"
+        # Convert to PIL Images
+        input_image = Image.open(image_file.stream).convert("RGB")
+        mask_image = Image.open(mask_file.stream).convert("RGB")
+
+        # Convert mask to binary (black/white)
+        mask_array = np.array(mask_image)
+        mask_array = (mask_array.mean(axis=2) > 128).astype(np.uint8) * 255
+        binary_mask = Image.fromarray(mask_array).convert("L")
+
+        prompt = "A high-resolution photograph of an ancient Egyptian monument with the missing part realistically reconstructed"
+
+        # Process image through the model
+        restored_image = pipe(
+            prompt=prompt,
+            image=input_image,
+            mask_image=binary_mask,
+        ).images[0]
+
+        
  
         result_image = Image.open(resut_path).convert("RGB")
 

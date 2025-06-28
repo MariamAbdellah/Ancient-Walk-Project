@@ -182,17 +182,28 @@ const ArtifactUpload = () => {
         });
 
         // Then send to restoration endpoint
-        const restorationResponse = await fetch("http://localhost:5003/restore", {
+        const restorationResponse = await fetch("http://localhost:8000/inpaint", {
           method: "POST",
           body: formData,
         });
+
+        console.log("Request sent to Restoration endpoint");
         
         if (!restorationResponse.ok) throw new Error("Restoration failed");
-        const restorationData = await restorationResponse.json();
+        // const restorationData = await restorationResponse.json();
+
+        // Get the image as a blob
+        const imageBlob = await restorationResponse.blob();
+        const imageUrl = URL.createObjectURL(imageBlob);
         
-        if (restorationData.restored_image) {
-          setRestoredImage(restorationData.restored_image);
+        if (imageUrl) {
+          setRestoredImage(imageUrl);
         }
+        
+        
+        // if (restorationData.restored_image) {
+        //   setRestoredImage(restorationData.restored_image);
+        // }
       } catch (error) {
         console.error("Error:", error);
       }
