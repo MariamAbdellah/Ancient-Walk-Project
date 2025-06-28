@@ -54,15 +54,17 @@ const ArtifactUpload = () => {
   const [imageSrc, setImageSrc] = useState();
   const [selectedLanguage, setSelectedLanguage] = useState("en");
   const [artifactData, setArtifactData] = useState({
-    description: "Loading...",
-    material: "Loading...",
-    timePeriod: "Loading...",
-    restorationStatus: "Loading..."
+    description: "Upload an image to analyze artifact details",
+    material: "Not available",
+    timePeriod: "Not available",
+    restorationStatus: "Not analyzed yet"
   });
   const [selectedFile, setSelectedFile] = useState(null);
   const [restoredImage, setRestoredImage] = useState(null);
   const [fileName, setFileName] = useState("");
   const [isDrawing, setIsDrawing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const canvasRef = useRef(null);
   const [lastX, setLastX] = useState(0);
   const [lastY, setLastY] = useState(0);
@@ -128,6 +130,40 @@ const ArtifactUpload = () => {
     });
   };
 
+  const fetchArtifactData = async (file) => {
+    setIsAnalyzing(true);
+    const formData = new FormData();
+    formData.append("original_image", file);
+    formData.append("language", selectedLanguage);
+
+    try {
+      const analysisResponse = await fetch("http://localhost:5000/analyze", {
+        method: "POST",
+        body: formData,
+      });
+      
+      if (!analysisResponse.ok) throw new Error("Analysis failed");
+      const analysisData = await analysisResponse.json();
+      
+      setArtifactData({
+        description: analysisData.artifact_info?.description || "Not available",
+        material: analysisData.artifact_info?.material || "Not available",
+        timePeriod: analysisData.artifact_info?.time_period || "Not available",
+        restorationStatus: analysisData.damage_status || "Not available",
+      });
+    } catch (error) {
+      console.error("Error fetching artifact data:", error);
+      setArtifactData({
+        description: "Error loading data",
+        material: "Error loading data",
+        timePeriod: "Error loading data",
+        restorationStatus: "Error loading data"
+      });
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
   const handleImageUpload = async (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -139,6 +175,17 @@ const ArtifactUpload = () => {
       setSelectedFile(file);
       setFileName(file.name);
       setRestoredImage(null);
+      
+      // Show analyzing state
+      setArtifactData({
+        description: "Analyzing...",
+        material: "Analyzing...",
+        timePeriod: "Analyzing...",
+        restorationStatus: "Analyzing..."
+      });
+      
+      // Immediately fetch artifact data when image is uploaded
+      await fetchArtifactData(file);
     }
   };
 
@@ -203,6 +250,8 @@ const ArtifactUpload = () => {
   const handleRestoration = async () => {
     if (!canvasRef.current) return;
     
+    setIsLoading(true);
+    
     // Get the drawn image as blob
     canvasRef.current.toBlob(async (blob) => {
       const formData = new FormData();
@@ -211,23 +260,6 @@ const ArtifactUpload = () => {
       formData.append("language", selectedLanguage);
 
       try {
-        // First send to analysis endpoint
-        const analysisResponse = await fetch("http://localhost:5000/analyze", {
-          method: "POST",
-          body: formData,
-        });
-        
-        if (!analysisResponse.ok) throw new Error("Analysis failed");
-        const analysisData = await analysisResponse.json();
-        
-        setArtifactData({
-          description: analysisData.artifact_info?.description || "Not available",
-          material: analysisData.artifact_info?.material || "Not available",
-          timePeriod: analysisData.artifact_info?.time_period || "Not available",
-          restorationStatus: analysisData.damage_status || "Not available",
-        });
-
-        // Then send to restoration endpoint
         const restorationResponse = await fetch("http://localhost:5003/restore", {
           method: "POST",
           body: formData,
@@ -241,6 +273,9 @@ const ArtifactUpload = () => {
         }
       } catch (error) {
         console.error("Error:", error);
+        alert("Restoration failed. Please try again.");
+      } finally {
+        setIsLoading(false);
       }
     }, 'image/png');
   };
@@ -330,14 +365,12 @@ const ArtifactUpload = () => {
                 </form>
                 <div className="dropdown-divider"></div>
                 <Link className="dropdown-item text-dark text-center" to="/register">New here? Register for free</Link>
-                 { /*<Link className="dropdown-item text-dark text-center" to="#">Forgot password?</Link>*/}
               </div>
             </div>
           </div>
         </div>
       </header>
 
-      {/* Rest of the component remains the same */}
       <section className="d-flex flex-column align-items-center py-5">
         <h2 className="text-center mb-4 fw-bold text-white text-uppercase ancint">Discover Your Artifact</h2>
         <div className="d-flex justify-content-center gap-4 mb-4 row">
@@ -353,18 +386,27 @@ const ArtifactUpload = () => {
 
           <button
             className="glass-btn col-6 col-md-3 col-lg-4"
-            disabled={!selectedFile}
+            disabled={!selectedFile || isLoading}
             onClick={handleRestoration}
           >
-            View Restored Artifact
+            {isLoading ? 'Restoring...' : 'Restore Damaged Areas'}
           </button>
 
           <LanguageSelector onLanguageChange={setSelectedLanguage} />
         </div>
 
+        {isAnalyzing && (
+          <div className="text-white text-center my-3">
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+            <p>Analyzing artifact...</p>
+          </div>
+        )}
+
         {imageSrc && (
           <div className="ArtifactUpload">
-            <h5 className="fw-semibold text-white ms-4">Draw on the artifact (use white lines):</h5>
+            <h5 className="fw-semibold text-white ms-4">Draw on the damaged areas (use white lines):</h5>
             <div 
               className="image-container position-relative"
               style={{cursor: 'crosshair'}}
@@ -416,6 +458,7 @@ const ArtifactUpload = () => {
               <button 
                 className="glass-btn"
                 onClick={clearDrawing}
+                disabled={isLoading}
               >
                 Clear Drawing
               </button>
@@ -433,17 +476,18 @@ const ArtifactUpload = () => {
           </div>
         )}
 
+        {/* Always show the artifact details table */}
         <div className="glass-card text-white p-4 mt-4">
           <h4 className="text-center mb-3">Artifact Details</h4>
           <table className="table table-borderless text-white glass table">
             <tbody>
               <tr><th colSpan="2" className="text-center">Basic Info</th></tr>
-              <tr><th>Description</th><td>{artifactData.description || "Loading..."}</td></tr>
-              <tr><th>Material</th><td>{artifactData.material || "Loading..."}</td></tr>
-              <tr><th>Time Period</th><td>{artifactData.timePeriod || "Loading..."}</td></tr>
+              <tr><th>Description</th><td>{artifactData.description}</td></tr>
+              <tr><th>Material</th><td>{artifactData.material}</td></tr>
+              <tr><th>Time Period</th><td>{artifactData.timePeriod}</td></tr>
 
-              <tr><th colSpan="2" className="text-center">Restoration Info</th></tr>
-              <tr><th>Restoration Status</th><td>{artifactData.restorationStatus || "Loading..."}</td></tr>
+              <tr><th colSpan="2" className="text-center">Condition</th></tr>
+              <tr><th>Damage Status</th><td>{artifactData.restorationStatus}</td></tr>
             </tbody>
           </table>
         </div>
