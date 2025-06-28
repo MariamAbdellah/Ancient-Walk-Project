@@ -207,7 +207,7 @@ def restore_artifact():
 
         if 'original_image' not in request.files:
             return jsonify({"error": "No image provided"}), 400
-
+ 
         # Get image from request
         image_file = request.files["original_image"]
         mask_file = request.files["mask_image"]

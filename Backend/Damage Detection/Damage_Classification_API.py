@@ -15,7 +15,7 @@ CORS(app, resources={
 })
 
 # Load your trained model
-model_path = r"D:\vs code\GP Full Project\Backend\Damage Detection\finetuned_mobilnet.keras"
+model_path = r"E:\Ancient-Walk-Project\Backend\Damage Detection\finetuned_mobilnet.keras"
 model = tf.keras.models.load_model(model_path)
 
 # Define label mapping
@@ -76,7 +76,7 @@ def fix_orientation(image):
     except Exception:
         pass  # Ignore EXIF errors
     return image
-
+ 
 def preprocess_query_image(image, target_size=(224, 224)):
     """Preprocess query image for model inference."""
     image = image.resize(target_size, Image.Resampling.LANCZOS)

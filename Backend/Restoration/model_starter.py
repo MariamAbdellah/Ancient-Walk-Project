@@ -15,10 +15,10 @@ import numpy as np
 import os
 from pathlib import Path
 from ultralytics import YOLO
-
+ 
 
 # Load YOLOv8 model (outside the endpoint for better performance)
-yolo_model_path = r"D:\vs code\GP Full Project\Backend\Restoration\best_yolov8_model.pt"
+yolo_model_path = r"E:\Ancient-Walk-Project\Backend\Restoration\best_yolov8_model.pt"
 yolo_model = YOLO(yolo_model_path)  # Load once when the app starts
 
 
@@ -64,7 +64,7 @@ async def inpaint(original_image: UploadFile, mask_image: UploadFile, language: 
         print("Files received")
 
 
-        result_dir = Path(r"D:\vs code\GP Full Project\Backend\Restoration\Result")
+        result_dir = Path(r"E:\Ancient-Walk-Project\Backend\Restoration\Result")
         result_dir.mkdir(exist_ok=True)  # This creates the directory if it doesn't exist
 
         # Read and convert images

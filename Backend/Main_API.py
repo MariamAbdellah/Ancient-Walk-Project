@@ -171,7 +171,7 @@ def analyze_artifact():
         description = (translate_text(retrieval_result.get("Description"), "en", language))
         material = (translate_text(retrieval_result.get("Material"), "en", language))
         time_period = (translate_text(retrieval_result.get("Time Period"), "en", language))
-
+ 
         response = {
             "damage_status": damage_status,
             "artifact_info": {
