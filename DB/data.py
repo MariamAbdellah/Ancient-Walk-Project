@@ -130,6 +130,7 @@ class UserData:
     def __del__(self):
         self.close()
         
+        
     def close(self):
         try:
             self.db.close()

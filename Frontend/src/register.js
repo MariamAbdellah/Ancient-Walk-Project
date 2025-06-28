@@ -6,6 +6,7 @@ import './index.css';
 
 //const API_URL = process.env.REACT_APP_API_URL;
 
+
 export default function Register() {
     
     const [currentUser, setCurrentUser] = useState(null);
