@@ -37,7 +37,7 @@ export default function Register() {
         }
 
         try {
-            const response = await fetch('http://127.0.0.1:5000/register', {
+            const response = await fetch('http://127.0.0.1:5050/register', {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(registerData),
@@ -63,7 +63,7 @@ export default function Register() {
         e.preventDefault();
 
         try {
-            const response = await fetch('http://127.0.0.1:5000/login', {
+            const response = await fetch('http://127.0.0.1:5050/login', {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(loginData),
