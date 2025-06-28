@@ -5,6 +5,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { Link } from 'react-router-dom';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const languages = [
   { code: "en", name: "English" },
   { code: "ar", name: "العربية" },
@@ -52,18 +54,30 @@ const ArtifactUpload = () => {
   const [imageSrc, setImageSrc] = useState();
   const [selectedLanguage, setSelectedLanguage] = useState("en");
   const [artifactData, setArtifactData] = useState({
-    description: "Loading...",
-    material: "Loading...",
-    timePeriod: "Loading...",
-    restorationStatus: "Loading..."
+    description: "Upload an image to analyze artifact details",
+    material: "Not available",
+    timePeriod: "Not available",
+    restorationStatus: "Not analyzed yet"
   });
   const [selectedFile, setSelectedFile] = useState(null);
   const [restoredImage, setRestoredImage] = useState(null);
   const [fileName, setFileName] = useState("");
   const [isDrawing, setIsDrawing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const canvasRef = useRef(null);
   const [lastX, setLastX] = useState(0);
   const [lastY, setLastY] = useState(0);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [loginData, setLoginData] = useState({ email: '', password: '' });
+
+  // Check for logged in user on component mount
+  useEffect(() => {
+    const storedUser = sessionStorage.getItem('currentUser');
+    if (storedUser) {
+      setCurrentUser(JSON.parse(storedUser));
+    }
+  }, []);
 
   // Initialize canvas when image is uploaded
   useEffect(() => {
@@ -82,6 +96,74 @@ const ArtifactUpload = () => {
     }
   }, [imageSrc]);
 
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch(`${API_URL}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(loginData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setCurrentUser(data.user);
+        sessionStorage.setItem("currentUser", JSON.stringify(data.user));
+        alert(`Welcome ${data.user.email.split('@')[0]}`);
+        // Close the modal after successful login
+        document.getElementById('loginModalClose').click();
+      } else {
+        alert(data.message || "Login failed");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("An error occurred while logging in.");
+    }
+  };
+
+  const handleLoginChange = (e) => {
+    setLoginData({
+      ...loginData,
+      [e.target.id]: e.target.value
+    });
+  };
+
+  const fetchArtifactData = async (file) => {
+    setIsAnalyzing(true);
+    const formData = new FormData();
+    formData.append("original_image", file);
+    formData.append("language", selectedLanguage);
+
+    try {
+      const analysisResponse = await fetch("http://localhost:5000/analyze", {
+        method: "POST",
+        body: formData,
+      });
+      
+      if (!analysisResponse.ok) throw new Error("Analysis failed");
+      const analysisData = await analysisResponse.json();
+      
+      setArtifactData({
+        description: analysisData.artifact_info?.description || "Not available",
+        material: analysisData.artifact_info?.material || "Not available",
+        timePeriod: analysisData.artifact_info?.time_period || "Not available",
+        restorationStatus: analysisData.damage_status || "Not available",
+      });
+    } catch (error) {
+      console.error("Error fetching artifact data:", error);
+      setArtifactData({
+        description: "Error loading data",
+        material: "Error loading data",
+        timePeriod: "Error loading data",
+        restorationStatus: "Error loading data"
+      });
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
   const handleImageUpload = async (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -93,6 +175,17 @@ const ArtifactUpload = () => {
       setSelectedFile(file);
       setFileName(file.name);
       setRestoredImage(null);
+      
+      // Show analyzing state
+      setArtifactData({
+        description: "Analyzing...",
+        material: "Analyzing...",
+        timePeriod: "Analyzing...",
+        restorationStatus: "Analyzing..."
+      });
+      
+      // Immediately fetch artifact data when image is uploaded
+      await fetchArtifactData(file);
     }
   };
 
@@ -155,33 +248,18 @@ const ArtifactUpload = () => {
   };
 
   const handleRestoration = async () => {
-    if (!canvasRef.current) return;/////////////////////////////////////////////////////
+    if (!canvasRef.current) return;
+    
+    setIsLoading(true);
     
     // Get the drawn image as blob
     canvasRef.current.toBlob(async (blob) => {
       const formData = new FormData();
-      formData.append("original_image", selectedFile);         // The original uploaded image
-      formData.append("mask_image", blob, "mask.png"); //fileName ||
+      formData.append("original_image", selectedFile);
+      formData.append("mask_image", blob, "mask.png");
       formData.append("language", selectedLanguage);
 
       try {
-        // First send to analysis endpoint
-        const analysisResponse = await fetch("http://localhost:5000/analyze", {
-          method: "POST",
-          body: formData,
-        });
-        
-        if (!analysisResponse.ok) throw new Error("Analysis failed");
-        const analysisData = await analysisResponse.json();
-        
-        setArtifactData({
-          description: analysisData.artifact_info?.description || "Not available",
-          material: analysisData.artifact_info?.material || "Not available",
-          timePeriod: analysisData.artifact_info?.time_period || "Not available",
-          restorationStatus: analysisData.damage_status || "Not available",
-        });
-
-        // Then send to restoration endpoint
         const restorationResponse = await fetch("http://localhost:8000/inpaint", {
           method: "POST",
           body: formData,
@@ -206,6 +284,9 @@ const ArtifactUpload = () => {
         // }
       } catch (error) {
         console.error("Error:", error);
+        alert("Restoration failed. Please try again.");
+      } finally {
+        setIsLoading(false);
       }
     }, 'image/png');
   };
@@ -233,7 +314,7 @@ const ArtifactUpload = () => {
                     </li>
                     <li className="nav-item">
                       <button className="nav-link fw-bold mx-1 text-uppercase text-white btn hover" data-bs-toggle="modal" data-bs-target="#loginModal">
-                        Login
+                        {currentUser ? currentUser.email.split('@')[0] : 'Login'}
                       </button>
                     </li>
                     <li className="nav-item">
@@ -259,17 +340,33 @@ const ArtifactUpload = () => {
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title" id="loginModalLabel">Login to Egyptian Artifact Restoration</h5>
-                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" id="loginModalClose"></button>
               </div>
               <div className="modal-body">
-                <form>
+                <form onSubmit={handleLogin}>
                   <div>
-                    <label htmlFor="loginEmail" className="form-label">Email Address</label>
-                    <input type="email" className="form-control" id="loginEmail" placeholder="email@example.com" required />
+                    <label htmlFor="email" className="form-label">Email Address</label>
+                    <input 
+                      type="email" 
+                      className="form-control" 
+                      id="email" 
+                      value={loginData.email} 
+                      onChange={handleLoginChange} 
+                      placeholder="email@example.com" 
+                      required 
+                    />
                   </div>
                   <div>
-                    <label htmlFor="loginPassword" className="form-label">Password</label>
-                    <input type="password" className="form-control" id="loginPassword" placeholder="Enter your password" required />
+                    <label htmlFor="password" className="form-label">Password</label>
+                    <input 
+                      type="password" 
+                      className="form-control" 
+                      id="password" 
+                      value={loginData.password} 
+                      onChange={handleLoginChange} 
+                      placeholder="Enter your password" 
+                      required 
+                    />
                   </div>
                   <div className="form-check d-flex align-items-center">
                     <input type="checkbox" className="form-check-input me-2" id="rememberMe" />
@@ -278,8 +375,7 @@ const ArtifactUpload = () => {
                   <button type="submit" className="btn btn-dark w-100 mt-3">Login</button>
                 </form>
                 <div className="dropdown-divider"></div>
-                <Link className="dropdown-item text-dark text-center" to="/project">New here? Register for free</Link>
-                <Link className="dropdown-item text-dark text-center" href="#">Forgot password?</Link>
+                <Link className="dropdown-item text-dark text-center" to="/register">New here? Register for free</Link>
               </div>
             </div>
           </div>
@@ -301,18 +397,27 @@ const ArtifactUpload = () => {
 
           <button
             className="glass-btn col-6 col-md-3 col-lg-4"
-            disabled={!selectedFile}
+            disabled={!selectedFile || isLoading}
             onClick={handleRestoration}
           >
-            View Restored Artifact
+            {isLoading ? 'Restoring...' : 'Restore Damaged Areas'}
           </button>
 
           <LanguageSelector onLanguageChange={setSelectedLanguage} />
         </div>
 
+        {isAnalyzing && (
+          <div className="text-white text-center my-3">
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+            <p>Analyzing artifact...</p>
+          </div>
+        )}
+
         {imageSrc && (
           <div className="ArtifactUpload">
-            <h5 className="fw-semibold text-white ms-4">Draw on the artifact (use white lines):</h5>
+            <h5 className="fw-semibold text-white ms-4">Draw on the damaged areas (use white lines):</h5>
             <div 
               className="image-container position-relative"
               style={{cursor: 'crosshair'}}
@@ -364,6 +469,7 @@ const ArtifactUpload = () => {
               <button 
                 className="glass-btn"
                 onClick={clearDrawing}
+                disabled={isLoading}
               >
                 Clear Drawing
               </button>
@@ -381,17 +487,18 @@ const ArtifactUpload = () => {
           </div>
         )}
 
+        {/* Always show the artifact details table */}
         <div className="glass-card text-white p-4 mt-4">
           <h4 className="text-center mb-3">Artifact Details</h4>
           <table className="table table-borderless text-white glass table">
             <tbody>
               <tr><th colSpan="2" className="text-center">Basic Info</th></tr>
-              <tr><th>Description</th><td>{artifactData.description || "Loading..."}</td></tr>
-              <tr><th>Material</th><td>{artifactData.material || "Loading..."}</td></tr>
-              <tr><th>Time Period</th><td>{artifactData.timePeriod || "Loading..."}</td></tr>
+              <tr><th>Description</th><td>{artifactData.description}</td></tr>
+              <tr><th>Material</th><td>{artifactData.material}</td></tr>
+              <tr><th>Time Period</th><td>{artifactData.timePeriod}</td></tr>
 
-              <tr><th colSpan="2" className="text-center">Restoration Info</th></tr>
-              <tr><th>Restoration Status</th><td>{artifactData.restorationStatus || "Loading..."}</td></tr>
+              <tr><th colSpan="2" className="text-center">Condition</th></tr>
+              <tr><th>Damage Status</th><td>{artifactData.restorationStatus}</td></tr>
             </tbody>
           </table>
         </div>
