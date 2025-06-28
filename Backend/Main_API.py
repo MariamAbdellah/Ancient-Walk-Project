@@ -79,51 +79,51 @@ def translate_text(text, src_lang, dest_lang):
         print(f"Translation failed for '{text}': {e}")
         return text  # Return original on failure
     
-def call_restoration_api(image_bytes):
-    """Call Restoration API"""
-    try:
-        response = requests.post(
-            RESTORATION_API_URL,
-            files={"image": ("image.jpg", image_bytes, "image/jpeg")},
-            timeout=TIMEOUT
-        )
-        return response.json() if response.ok else {"error": "Restoration API failed"}
-    except Exception as e:
-        return {"error": str(e)}
+# def call_restoration_api(image_bytes):
+#     """Call Restoration API"""
+#     try:
+#         response = requests.post(
+#             RESTORATION_API_URL,
+#             files={"image": ("image.jpg", image_bytes, "image/jpeg")},
+#             timeout=TIMEOUT
+#         )
+#         return response.json() if response.ok else {"error": "Restoration API failed"}
+#     except Exception as e:
+#         return {"error": str(e)}
     
 
-def res_api(image_file):
+# def res_api(image_file):
 
-    print("Files received:", request.files)  # Check all files
+#     print("Files received:", request.files)  # Check all files
 
-    filename = image_file.filename
-    print("Uploaded filename:", filename)
-    print("Content-Type:", image_file.content_type)
-    print("Headers:", request.headers)
+#     filename = image_file.filename
+#     print("Uploaded filename:", filename)
+#     print("Content-Type:", image_file.content_type)
+#     print("Headers:", request.headers)
 
-    image = Image.open(io.BytesIO(image_file.read()))  # Read image into PIL object
+#     image = Image.open(io.BytesIO(image_file.read()))  # Read image into PIL object
 
-    # Define a mapping of known filenames to result paths
-    result_mapping = {
-        "nefertiti_image.jpg": r"E:\Ancient-Walk-Project\Backend\Restoration\nefertiti result.jpg",
-        "akhenaton.jpg": r"E:\Ancient-Walk-Project\Backend\Restoration\akhenaton result.png",
-        "statue.jpg": r"E:\Ancient-Walk-Project\Backend\Restoration\statue result.png",
-        "snefru.jpg": r"E:\Ancient-Walk-Project\Backend\Restoration\snefru result.png"
-    }
+#     # Define a mapping of known filenames to result paths
+#     result_mapping = {
+#         "nefertiti_image.jpg": r"E:\Ancient-Walk-Project\Backend\Restoration\nefertiti result.jpg",
+#         "akhenaton.jpg": r"E:\Ancient-Walk-Project\Backend\Restoration\akhenaton result.png",
+#         "statue.jpg": r"E:\Ancient-Walk-Project\Backend\Restoration\statue result.png",
+#         "snefru.jpg": r"E:\Ancient-Walk-Project\Backend\Restoration\snefru result.png"
+#     }
 
-    # Use a default image if no match found
-    resut_path = result_mapping.get(filename, r"E:\Ancient-Walk-Project\Backend\Restoration\default_result.jpg")
+#     # Use a default image if no match found
+#     resut_path = result_mapping.get(filename, r"E:\Ancient-Walk-Project\Backend\Restoration\default_result.jpg")
         
-    resut_image = Image.open(resut_path).convert("RGB")
+#     resut_image = Image.open(resut_path).convert("RGB")
 
-    return resut_image
+#     return resut_image
 
 @app.route("/analyze", methods=["POST"])
 def analyze_artifact():
     try:
         # 1. Get input
         image_file = request.files["original_image"]
-        mask_file = request.files["mask_image"]
+        # mask_file = request.files["mask_image"]
         language = request.form.get("language", "en")
         if not language:
             language = "en"
@@ -142,30 +142,7 @@ def analyze_artifact():
 
             damage_result = damage_future.result()
             retrieval_result = retrieval_future.result()
-            # restoration_result = restoration_future.result()
-
-        
-        # # 3. Call restoration API sequentially (not concurrent)
-        # restoration_response = requests.post(
-        #     RESTORATION_API_URL,
-        #     files={"image": ("image.jpg", image_bytes, "image/jpeg")},
-        #     timeout=TIMEOUT
-        # )
-
-        # restored_image = res_api(image_file)
-
-        # response = {
-        #     "damage_status":  translate_text(damage_result.get("label", "Unknown Status"), "en", language),  # Get the label directly
-        #     # "damage_confidence": damage_result.get("confidence", 0),
-        #     "artifact_info": {
-        #         "description":  translate_text(retrieval_result.get("Description"), "en", language),
-        #         "material": translate_text(retrieval_result.get("Material"), "en", language),
-        #         "time_period": translate_text(retrieval_result.get("Time Period"), "en", language),
-        #         # "restoration_status": retrieval_result.get("info", {}).get("Restoration Status")
-        #     },
-        #     "restored_"
-        #     "warnings": []
-        # }
+         
 
         damage_status = (translate_text(damage_result.get("label", "Unknown Status"), "en", language))
         description = (translate_text(retrieval_result.get("Description"), "en", language))
@@ -182,39 +159,15 @@ def analyze_artifact():
             "warnings": []
         }
 
-        # response = {
-        #     "damage_status": damage_result.get("label", "Unknown Status"),  # Get the label directly
-        #     # "damage_confidence": damage_result.get("confidence", 0),
-        #     "artifact_info": {
-        #         "description": retrieval_result.get("Description"),
-        #         "material": retrieval_result.get("Material"),
-        #         "time_period": retrieval_result.get("Time Period"),
-        #         # "restoration_status": retrieval_result.get("info", {}).get("Restoration Status")
-        #     },
-        #     "warnings": []
-        # }
 
-        # # 5. Handle restoration response
-        # if restoration_response.ok:
-        #     # If the API returns JSON data along with the image
-        #     if restoration_response.headers.get('Content-Type') == 'application/json':
-        #         restoration_data = restoration_response.json()
-        #         response["restoration_info"] = restoration_data
-        #     # If the API returns just the image
-        #     else:
-        #         # Convert image to base64 for JSON response
-        #         from base64 import b64encode
-        #         restored_image_bytes = restoration_response.content
-        #         restored_image_base64 = b64encode(restored_image_bytes).decode('utf-8')
-        #         response["restored_image"] = f"data:image/jpeg;base64,{restored_image_base64}"
-        # else:
-        #     response["warnings"].append("Restoration API failed")
-
+        
         # 4. Error handling
         if "error" in damage_result:
             response["warnings"].append(f"Damage detection: {damage_result['error']}")
         if "error" in retrieval_result:
             response["warnings"].append(f"Retrieval: {retrieval_result['error']}")
+
+        print(response)
 
         return jsonify(response)
 
