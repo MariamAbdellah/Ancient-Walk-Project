@@ -5,6 +5,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { Link } from 'react-router-dom';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const languages = [
   { code: "en", name: "English" },
   { code: "ar", name: "العربية" },
@@ -64,6 +66,16 @@ const ArtifactUpload = () => {
   const canvasRef = useRef(null);
   const [lastX, setLastX] = useState(0);
   const [lastY, setLastY] = useState(0);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [loginData, setLoginData] = useState({ email: '', password: '' });
+
+  // Check for logged in user on component mount
+  useEffect(() => {
+    const storedUser = sessionStorage.getItem('currentUser');
+    if (storedUser) {
+      setCurrentUser(JSON.parse(storedUser));
+    }
+  }, []);
 
   // Initialize canvas when image is uploaded
   useEffect(() => {
@@ -81,6 +93,40 @@ const ArtifactUpload = () => {
       img.src = imageSrc;
     }
   }, [imageSrc]);
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch(`${API_URL}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(loginData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setCurrentUser(data.user);
+        sessionStorage.setItem("currentUser", JSON.stringify(data.user));
+        alert(`Welcome ${data.user.email.split('@')[0]}`);
+        // Close the modal after successful login
+        document.getElementById('loginModalClose').click();
+      } else {
+        alert(data.message || "Login failed");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("An error occurred while logging in.");
+    }
+  };
+
+  const handleLoginChange = (e) => {
+    setLoginData({
+      ...loginData,
+      [e.target.id]: e.target.value
+    });
+  };
 
   const handleImageUpload = async (event) => {
     const file = event.target.files[0];
@@ -155,13 +201,13 @@ const ArtifactUpload = () => {
   };
 
   const handleRestoration = async () => {
-    if (!canvasRef.current) return;/////////////////////////////////////////////////////
+    if (!canvasRef.current) return;
     
     // Get the drawn image as blob
     canvasRef.current.toBlob(async (blob) => {
       const formData = new FormData();
-      formData.append("original_image", selectedFile);         // The original uploaded image
-      formData.append("mask_image", blob, "mask.png"); //fileName ||
+      formData.append("original_image", selectedFile);
+      formData.append("mask_image", blob, "mask.png");
       formData.append("language", selectedLanguage);
 
       try {
@@ -222,7 +268,7 @@ const ArtifactUpload = () => {
                     </li>
                     <li className="nav-item">
                       <button className="nav-link fw-bold mx-1 text-uppercase text-white btn hover" data-bs-toggle="modal" data-bs-target="#loginModal">
-                        Login
+                        {currentUser ? currentUser.email.split('@')[0] : 'Login'}
                       </button>
                     </li>
                     <li className="nav-item">
@@ -248,17 +294,33 @@ const ArtifactUpload = () => {
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title" id="loginModalLabel">Login to Egyptian Artifact Restoration</h5>
-                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" id="loginModalClose"></button>
               </div>
               <div className="modal-body">
-                <form>
+                <form onSubmit={handleLogin}>
                   <div>
-                    <label htmlFor="loginEmail" className="form-label">Email Address</label>
-                    <input type="email" className="form-control" id="loginEmail" placeholder="email@example.com" required />
+                    <label htmlFor="email" className="form-label">Email Address</label>
+                    <input 
+                      type="email" 
+                      className="form-control" 
+                      id="email" 
+                      value={loginData.email} 
+                      onChange={handleLoginChange} 
+                      placeholder="email@example.com" 
+                      required 
+                    />
                   </div>
                   <div>
-                    <label htmlFor="loginPassword" className="form-label">Password</label>
-                    <input type="password" className="form-control" id="loginPassword" placeholder="Enter your password" required />
+                    <label htmlFor="password" className="form-label">Password</label>
+                    <input 
+                      type="password" 
+                      className="form-control" 
+                      id="password" 
+                      value={loginData.password} 
+                      onChange={handleLoginChange} 
+                      placeholder="Enter your password" 
+                      required 
+                    />
                   </div>
                   <div className="form-check d-flex align-items-center">
                     <input type="checkbox" className="form-check-input me-2" id="rememberMe" />
@@ -267,14 +329,15 @@ const ArtifactUpload = () => {
                   <button type="submit" className="btn btn-dark w-100 mt-3">Login</button>
                 </form>
                 <div className="dropdown-divider"></div>
-                <Link className="dropdown-item text-dark text-center" to="/project">New here? Register for free</Link>
-                <Link className="dropdown-item text-dark text-center" href="#">Forgot password?</Link>
+                <Link className="dropdown-item text-dark text-center" to="/register">New here? Register for free</Link>
+                 { /*<Link className="dropdown-item text-dark text-center" to="#">Forgot password?</Link>*/}
               </div>
             </div>
           </div>
         </div>
       </header>
 
+      {/* Rest of the component remains the same */}
       <section className="d-flex flex-column align-items-center py-5">
         <h2 className="text-center mb-4 fw-bold text-white text-uppercase ancint">Discover Your Artifact</h2>
         <div className="d-flex justify-content-center gap-4 mb-4 row">

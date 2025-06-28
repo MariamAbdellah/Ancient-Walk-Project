@@ -1,4 +1,8 @@
 {
+  "resolutions": {
+    "ajv": "6.12.6",
+    "ajv-keywords": "3.5.2"
+  },
   "name": "gp-react.js",
   "version": "0.1.0",
   "private": true,
@@ -8,17 +12,22 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
     "@testing-library/user-event": "^13.5.0",
+    "ajv": "^8.12.0",
+    "ajv-keywords": "^5.1.0",
+    "axios": "1.6.2",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
     "jquery": "^3.7.1",
     "popper.js": "^1.16.1",
-    "react": "^19.0.0",
+    "react": "18.2.0",
     "react-bootstrap": "^2.10.9",
-    "react-canvas-draw": "^1.2.1",
-    "react-dom": "^19.0.0",
+    "react-canvas-draw": "1.1.1",
+    "react-dom": "18.2.0",
     "react-router-dom": "^6.30.0",
     "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "webpack": "5.76.3",
+    "webpack-dev-server": "4.15.1"
   },
   "scripts": {
     "start": "react-scripts start",
