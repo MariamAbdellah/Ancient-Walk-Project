@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom'; // Add useLocation import
 import './App.css';
 import './index.css';
 
-const API_URL = process.env.REACT_APP_API_URL;
+//const API_URL = process.env.REACT_APP_API_URL;
 
 export default function About() {
     const [currentUser, setCurrentUser] = useState(null);
     const [loginData, setLoginData] = useState({ email: '', password: '' });
     const [feedbackData, setFeedbackData] = useState({ feedback: '' });
+    const location = useLocation(); // Get current location
 
     // Check for logged in user on component mount
     useEffect(() => {
@@ -23,7 +24,7 @@ export default function About() {
         e.preventDefault();
 
         try {
-            const response = await fetch(`${API_URL}/login`, {
+            const response = await fetch('http://127.0.0.1:5000/login', {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(loginData),
@@ -117,29 +118,28 @@ export default function About() {
                                             <li className="nav-item">
                                                 <Link className="nav-link text-uppercase text-white font" to="/project">Project</Link>
                                             </li>
-                                            {currentUser ? (
-                                                <li className="nav-item">
-                                                    <span className="nav-link text-uppercase text-white font">
-                                                        <i className="bi bi-person-circle"></i> {currentUser.email.split('@')[0]} 
+                                            <li className="nav-item">
+                                                {currentUser ? (
+                                                    <span className="nav-link fw-bold mx-1 text-uppercase text-white">
+                                                        Welcome {currentUser.email.split('@')[0]}
                                                     </span>
+                                                ) : (
+                                                    <button 
+                                                        className="nav-link fw-bold mx-1 text-uppercase text-white btn hover" 
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#loginModal"
+                                                    >
+                                                        Login
+                                                    </button>
+                                                )}
+                                            </li>
+                                            {/* Only show Register button if not on the registration page and no user is logged in */}
+                                            {!currentUser && location.pathname !== "/register" && (
+                                                <li className="nav-item">
+                                                    <button className="nav-link btn btn-dark mx-1 hove">
+                                                        <Link className='text-white font text-uppercase fw-bold text-decoration-none' to="/register">Register</Link> 
+                                                    </button>
                                                 </li>
-                                            ) : (
-                                                <>
-                                                    <li className="nav-item">
-                                                        <button
-                                                            className="nav-link fw-bold mx-1 text-uppercase text-white btn hover"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#loginModal"
-                                                        >
-                                                            Login
-                                                        </button>
-                                                    </li>
-                                                    <li className="nav-item">
-                                                        <button className="nav-link btn btn-dark mx-1 hove">
-                                                            <Link className='text-white font text-uppercase fw-bold text-decoration-none' to="/register">Register</Link> 
-                                                        </button>
-                                                    </li>
-                                                </>
                                             )}
                                         </ul>
                                     </div>
@@ -200,7 +200,7 @@ export default function About() {
                                     </form>
                                     <div className="dropdown-divider"></div>
                                     <Link className="dropdown-item text-dark text-center" to="/register">New here? Register for free</Link>
-                                   { /*<Link className="dropdown-item text-dark text-center" to="#">Forgot password?</Link>*/}
+                                    { /*<Link className="dropdown-item text-dark text-center" to="#">Forgot password?</Link>*/}
                                 </div>
                             </div>
                         </div>

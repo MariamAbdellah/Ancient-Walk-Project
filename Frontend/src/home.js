@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom'; // Corrected import
 
-const API_URL = process.env.REACT_APP_API_URL;
+//const API_URL = process.env.REACT_APP_API_URL;
 
 export default function Main() {
     const [currentUser, setCurrentUser] = useState(null);
     const [loginData, setLoginData] = useState({ email: '', password: '' });
+    const location = useLocation(); // Get current location
 
     // Check for logged in user on component mount
     useEffect(() => {
@@ -22,7 +23,7 @@ export default function Main() {
         e.preventDefault();
 
         try {
-            const response = await fetch(`${API_URL}/login`, {
+            const response = await fetch("http://localhost:5000/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(loginData),
@@ -84,19 +85,28 @@ export default function Main() {
                                                 <Link className="nav-link text-uppercase text-white font" to="/project">Project</Link>
                                             </li>
                                             <li className="nav-item">
-                                                <button
-                                                    className="nav-link fw-bold mx-1 text-uppercase text-white btn hover"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#loginModal"
-                                                >
-                                                    {currentUser ? currentUser.email.split('@')[0] : 'Login'}
-                                                </button>
+                                                {currentUser ? (
+                                                    <span className="nav-link fw-bold mx-1 text-uppercase text-white">
+                                                        Welcome {currentUser.email.split('@')[0]}
+                                                    </span>
+                                                ) : (
+                                                    <button 
+                                                        className="nav-link fw-bold mx-1 text-uppercase text-white btn hover" 
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#loginModal"
+                                                    >
+                                                        Login
+                                                    </button>
+                                                )}
                                             </li>
-                                            <li className="nav-item">
-                                                <button className="nav-link btn btn-dark mx-1 hove">
-                                                    <Link className='text-white font text-uppercase fw-bold text-decoration-none' to="/register">Register</Link> 
-                                                </button>
-                                            </li>
+                                            {/* Only show Register button if not on the registration page and no user is logged in */}
+                                            {!currentUser && location.pathname !== "/register" && (
+                                                <li className="nav-item">
+                                                    <button className="nav-link btn btn-dark mx-1 hove">
+                                                        <Link className='text-white font text-uppercase fw-bold text-decoration-none' to="/register">Register</Link> 
+                                                    </button>
+                                                </li>
+                                            )}
                                         </ul>
                                     </div>
                                 </div>
@@ -156,7 +166,6 @@ export default function Main() {
                                     </form>
                                     <div className="dropdown-divider"></div>
                                     <Link className="dropdown-item text-dark text-center" to="/register">New here? Register for free</Link>
-                                    { /*<Link className="dropdown-item text-dark text-center" to="#">Forgot password?</Link>*/}
                                 </div>
                             </div>
                         </div>

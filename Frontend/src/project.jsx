@@ -3,9 +3,9 @@ import './index.css';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom'; // Add useLocation import
 
-const API_URL = process.env.REACT_APP_API_URL;
+//const API_URL = process.env.REACT_APP_API_URL;
 
 const languages = [
   { code: "en", name: "English" },
@@ -45,7 +45,7 @@ const LanguageSelector = ({ onLanguageChange }) => {
             {lang.name}
           </option>
         ))}
-      </select>
+      </select> 
     </div>
   );
 };
@@ -53,6 +53,7 @@ const LanguageSelector = ({ onLanguageChange }) => {
 const ArtifactUpload = () => {
   const [imageSrc, setImageSrc] = useState();
   const [selectedLanguage, setSelectedLanguage] = useState("en");
+  const location = useLocation();
   const [artifactData, setArtifactData] = useState({
     description: "Upload an image to analyze artifact details",
     material: "Not available",
@@ -100,7 +101,7 @@ const ArtifactUpload = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch(`${API_URL}/login`, {
+      const response = await fetch('http://127.0.0.1:5000/login', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(loginData),
@@ -313,15 +314,28 @@ const ArtifactUpload = () => {
                       <Link className="nav-link text-uppercase text-white font" to="/project">Project</Link>
                     </li>
                     <li className="nav-item">
-                      <button className="nav-link fw-bold mx-1 text-uppercase text-white btn hover" data-bs-toggle="modal" data-bs-target="#loginModal">
-                        {currentUser ? currentUser.email.split('@')[0] : 'Login'}
-                      </button>
+                      {currentUser ? (
+                        <span className="nav-link fw-bold mx-1 text-uppercase text-white">
+                          Welcome {currentUser.email.split('@')[0]}
+                        </span>
+                      ) : (
+                        <button 
+                          className="nav-link fw-bold mx-1 text-uppercase text-white btn hover" 
+                          data-bs-toggle="modal" 
+                          data-bs-target="#loginModal"
+                        >
+                          Login
+                        </button>
+                      )}
                     </li>
-                    <li className="nav-item">
-                      <button className="nav-link btn btn-dark mx-1 hove">
-                        <Link className='text-white font text-uppercase fw-bold text-decoration-none' to="/register">Register</Link>
-                      </button>
-                    </li>
+                    {/* Only show Register button if not on the registration page and no user is logged in */}
+                    {!currentUser && location.pathname !== "/register" && (
+                      <li className="nav-item">
+                        <button className="nav-link btn btn-dark mx-1 hove">
+                          <Link className='text-white font text-uppercase fw-bold text-decoration-none' to="/register">Register</Link>
+                        </button>
+                      </li>
+                    )}
                   </ul>
                 </div>
               </div>
