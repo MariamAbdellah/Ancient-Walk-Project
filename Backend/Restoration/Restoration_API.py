@@ -243,7 +243,7 @@ def restore_artifact():
 
         
  
-        result_image = Image.open(resut_path).convert("RGB")
+        # result_image = Image.open(resut_path).convert("RGB")
 
         # cropped_region = yolo_prediction(image)
 
