@@ -58,34 +58,18 @@ export default function About() {
         setFeedbackData({ ...feedbackData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
         
         if (!feedbackData.feedback.trim()) {
-            alert("Please enter your feedback.");
+            alert("Please enter your feedback before submitting.");
             return;
         }
-
-        try {
-            const response = await fetch('your-api-endpoint/feedback', {    //API feedback
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(feedbackData),
-            });
-
-            if (response.ok) {
-                alert('Thanks for your feedback!');
-                setFeedbackData({ feedback: '' });
-            } else {
-                throw new Error('Failed to submit feedback');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Failed to submit feedback. Please try again.');
-        }
+        
+        alert('Thank you for your feedback! We appreciate your input.');
+        setFeedbackData({ feedback: '' }); // Clear the textarea after submission
     };
+
 
     return (
         <>
@@ -371,20 +355,21 @@ export default function About() {
                             </div>
                             
                             {/*feedback */}
-                            <div className="col-sm-12 col-lg-3 ps-5 ms-5 ">
+                            <div className="col-sm-12 col-lg-3 ps-5 ms-5">
                                 <h5 className="fw-bold mb-3">Give us feedback</h5>
                                 <form onSubmit={handleSubmit}>
-                                <textarea 
-                                    name="feedback"
-                                    value={feedbackData.feedback}
-                                    onChange={handleInputChange}
-                                    placeholder="Your feedback..." 
-                                    rows="4" 
-                                    className="form-control mb-3"
-                                />
-                                <button type="submit" className=" glass-btn px-3 py-2">
-                                    Send Feedback
-                                </button>
+                                    <textarea 
+                                        name="feedback"
+                                        value={feedbackData.feedback}
+                                        onChange={handleInputChange}
+                                        placeholder="Your feedback..." 
+                                        rows="4" 
+                                        className="form-control mb-3"
+                                        required
+                                    />
+                                    <button type="submit" className="glass-btn px-3 py-2">
+                                        Send Feedback
+                                    </button>
                                 </form>
                             </div>
                         </div>
